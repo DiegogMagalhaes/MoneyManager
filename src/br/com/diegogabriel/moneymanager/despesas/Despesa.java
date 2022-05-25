@@ -1,6 +1,7 @@
 package br.com.diegogabriel.moneymanager.despesas;
 
 import br.com.diegogabriel.moneymanager.exception.SaldoInsuficienteException;
+import br.com.diegogabriel.moneymanager.modelo.ParticaoGastos;
 
 public abstract class Despesa {
 	
@@ -30,4 +31,14 @@ public abstract class Despesa {
 		return "Nome: " + nome + "; Valor: " + valor + "; Descrição :" + descricao + ". Foi pago? " + pago;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		String nome = (String) obj;
+		return this.nome.equals(nome);
+	}
+	
+	@Override
+	public int hashCode() {
+		return nome.hashCode();
+	}
 }

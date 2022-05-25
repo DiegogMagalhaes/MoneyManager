@@ -3,25 +3,26 @@ package br.com.diegogabriel.moneymanager.modelo;
 import br.com.diegogabriel.moneymanager.despesas.Despesa;
 import br.com.diegogabriel.moneymanager.despesas.DespesaMensal;
 import br.com.diegogabriel.moneymanager.despesas.Gasto;
+import br.com.diegogabriel.moneymanager.exception.SaldoInsuficienteException;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class MoneyManager implements Serializable{
+public class MoneyManager{
 
-	Set<Despesa> despesas = new HashSet<>();
-	Usuario usuario;
-	Set<ParticaoGastos> particaoGastos = new HashSet<>();
+	private Set<Despesa> despesas = new HashSet<>();
+	private Set<ParticaoGastos> particoes = new HashSet<>();
+	private Double saldo;
 	
-	private enum TipodeDespesa{
+	private enum tipodeDespesa{
 		DESPESAMENSAL(1),
 		GASTOS(2);
 		
 		private final int id;
 		
-		TipodeDespesa(int id) {
+		tipodeDespesa(int id) {
 			this.id = id;
 		}
 		
@@ -29,25 +30,27 @@ public class MoneyManager implements Serializable{
 			return id;
 		}
 	}
+
+	public void adicionarSaldo(Double valor) {
+		saldo += valor;
+	}
 	
-	public void addDespesa() {
+	public void adicionarDespesa() {
 			
-		Double valor; 
-		String nome;
-		String descricao;
+		Double valor = 0d; 
+		String nome = "";
+		String descricao = "";
 		
 		Scanner scan = new Scanner(System.in);
+		
 		
 		System.out.println("Qual tipo de despesa deseja? \n "
 							+ "1. Despesa mensal - Despesas que se renovam de mes em mes\n "
 							+ "2. Gastos - Despesas ocassionais do dia a dia e demais compras");
-		int tipo = scan.nextInt();
+		int tipo = 0; 
+		tipo = Integer.parseInt(scan.nextLine());
 		
-		if(tipo > 2 && tipo < 1) {
-			scan.close();
-			throw new IllegalArgumentException("O valor deve ser 1(Despesa Mensal) ou 2(Gastos)");
-		} 
-		
+		if(tipo > 2 && tipo < 1) throw new IllegalArgumentException("O valor deve ser 1(Despesa Mensal) ou 2(Gastos)");
 		System.out.println("Insira um nome para a despesa: ");
 		nome = scan.nextLine();
 		
@@ -57,9 +60,7 @@ public class MoneyManager implements Serializable{
 		System.out.println("Insira o valor da despesa: ");
 		valor = scan.nextDouble();
 		
-		scan.close();
-		
-		if(tipo == TipodeDespesa.DESPESAMENSAL.getValor()) 
+		if(tipo == tipodeDespesa.DESPESAMENSAL.getValor()) 
 		{
 			LocalDate data = criarLocalDateDespesaMensal();
 			Despesa despesa = new DespesaMensal(valor,nome,descricao,data);
@@ -67,7 +68,7 @@ public class MoneyManager implements Serializable{
 			
 		}
 		
-		else if(tipo == TipodeDespesa.GASTOS.getValor()) 
+		else if(tipo == tipodeDespesa.GASTOS.getValor()) 
 		{
 			ParticaoGastos particao = criarParticaoGastos();
 			Despesa despesa = new Gasto(valor,nome,descricao,particao);
@@ -84,15 +85,14 @@ public class MoneyManager implements Serializable{
 		
 		System.out.println("Desseja inserir esse gasto a alguma partição existente?\n");
 		
-		for(ParticaoGastos x : particaoGastos) 
+		for(ParticaoGastos x : particoes) 
 			System.out.println(x);
 		
 		System.out.print("\n Se sim insira o nome da particao: ");
 		
 		particao = scan.nextLine();
-		scan.close();
 		
-		for(ParticaoGastos x : particaoGastos)
+		for(ParticaoGastos x : particoes)
 			if(particao.equals(x.getID())) return x;
 		
 		return null;
@@ -100,17 +100,57 @@ public class MoneyManager implements Serializable{
 	}
 	
 	private LocalDate criarLocalDateDespesaMensal() {
+		
 		String data;
-
+		LocalDate dataretorno;
+		
 		Scanner scan = new Scanner(System.in);
 		
 		System.out.println("Insira uma data no formato dd/mm/aa:");
 		
 		data = scan.nextLine();
-		scan.close();
 		
-		DateTimeFormatter formato = (DateTimeFormatter.ofPattern("dd/mm/yy")); 
+		DateTimeFormatter formato = (DateTimeFormatter.ofPattern("dd/MM/yy")); 
+		dataretorno = LocalDate.parse(data, formato);
 		
-		return LocalDate.parse(data, formato);
+		return dataretorno;
 	}
+	
+	public void mostrarDespesas() {
+		despesas.forEach(despesa -> System.out.println(despesa));
+	}
+	
+	public void pagarDespesas(String nome) {
+		despesas.forEach(despesa ->
+		{
+			if(despesa.equals(nome)) saldo = despesa.pagar(saldo);
+		});
+		
+	}
+
+	public void adicionarParticao() {
+		Double limite; 
+		String ID;
+		
+		Scanner scan = new Scanner(System.in);
+		
+		System.out.println("Insira o nome da particao: ");
+		ID = scan.next();
+		
+		System.out.println("Insira o valor limite alocado a essa particao: ");
+		limite = scan.nextDouble();
+		
+		ParticaoGastos novaParticao = new ParticaoGastos(ID,limite);
+		particoes.add(novaParticao);
+	}
+
+	public MoneyManager(Double saldo) {
+		this.saldo = saldo;
+	}
+	
+	@Override
+	public String toString() {
+		return "Saldo: " + saldo.toString();
+	}
+	
 }

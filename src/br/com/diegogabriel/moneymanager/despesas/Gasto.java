@@ -25,4 +25,8 @@ public class Gasto extends Despesa{
 		this.particao = particao;
 	}
 	
+	@Override
+	public String toString() {
+		return super.toString() + "Particao: " + particao;
+	}
 }
