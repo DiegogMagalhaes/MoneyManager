@@ -2,6 +2,7 @@ package br.com.diegogabriel.moneymanager.despesas;
 
 import br.com.diegogabriel.moneymanager.exception.SaldoInsuficienteException;
 import br.com.diegogabriel.moneymanager.modelo.Particao;
+import java.io.Serializable;
 
 /**
  * Classe abstrata responsavel por definir o que é uma despesa.
@@ -10,7 +11,7 @@ import br.com.diegogabriel.moneymanager.modelo.Particao;
  * @version 1.0
  */
 
-public abstract class Despesa {
+public abstract class Despesa implements Serializable{
 	
 	protected Double valor;
 	protected String nome;

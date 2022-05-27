@@ -19,7 +19,7 @@ import java.util.*;
  * @version 1.0
  */
 
-public class MoneyManager{
+public class MoneyManager implements Serializable{
 
 	/**
 	 * saldo se refere ao valor atual de saldo disponivel.
@@ -313,6 +313,7 @@ public class MoneyManager{
 		
 		return true;
 	}
+	
 	
 	/**
 	 * Avalia se uma despesa a ser adicionada pode ser paga com o valor previsto do saldo apos ter pago todas despesas.

@@ -1,5 +1,7 @@
 package br.com.diegogabriel.moneymanager.modelo;
 
+import java.io.Serializable;
+
 /**
  * Representa o usuario do programa.
  * 
@@ -7,7 +9,7 @@ package br.com.diegogabriel.moneymanager.modelo;
  * @version 1.0
  */
 
-public class Usuario {
+public class Usuario implements Serializable{
 	
 	private String nome;
 	private Double salario;

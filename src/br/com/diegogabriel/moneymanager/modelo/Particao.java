@@ -1,6 +1,7 @@
 package br.com.diegogabriel.moneymanager.modelo;
 
 import br.com.diegogabriel.moneymanager.exception.LimiteParticaoException;
+import java.io.Serializable;
 
 /**
  * Particao é uma classe que representa uma partição de gastos. 
@@ -14,7 +15,7 @@ import br.com.diegogabriel.moneymanager.exception.LimiteParticaoException;
  * @version 1.0
  */
 
-public class Particao {
+public class Particao implements Serializable{
 
 	private String ID;
 	private Double gastoMes;

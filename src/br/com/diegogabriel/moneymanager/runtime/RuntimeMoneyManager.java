@@ -1,11 +1,12 @@
 package br.com.diegogabriel.moneymanager.runtime;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Scanner;
 
 import br.com.diegogabriel.moneymanager.modelo.MoneyManager;
 import br.com.diegogabriel.moneymanager.modelo.Usuario;
+
+import java.io.*;
 
 /**
  * Classe com o objetivo de exibir interfaces e executar os metodos de MoneyManager.
@@ -22,9 +23,10 @@ public final class RuntimeMoneyManager {
 	 * 
 	 * @return							Retorna um booleano, cujo so retorna false quando selecionado a opção de sair.
 	 * @throws 	NullPointerException	Joga na pilha uma exceção caso usuario seja nulo.	
+	 * @throws IOException 
 	 */
 	
-	public boolean menu() throws NullPointerException{
+	public boolean menu() throws NullPointerException, IOException{
 		
 		if(usuario == null) throw new NullPointerException("Usuario invalido");
 		
@@ -75,7 +77,13 @@ public final class RuntimeMoneyManager {
 			Double valor = scan.nextDouble();
 			usuario.moneyManager.adicionarSaldo(valor);
 			return true;
+		
+		case 8:
+			System.out.println("Digite o caminho em que o arquivo sera salvo: ");
+			String path = scan.nextLine();
 
+			salvarUsuario(path);
+			
 		}
 
 		return false;
@@ -114,4 +122,35 @@ public final class RuntimeMoneyManager {
 		return novoUsuario;
 	}
 
+	
+	/**
+	 * Salva o usuario em um caminho expecificado pelo proprio usuario
+	 * 
+	 * @param path			String referente ao caminho onde o arquivo sera salvo
+	 * @throws IOException	Joga uma exceção na pilha caso ocorre algum erro no procedimento de entrada/saida
+	 */
+	
+	public void salvarUsuario(String path) throws IOException {
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
+        oos.writeObject(this.usuario);
+        oos.close();
+	}
+	
+	
+	/**
+	 * Carrega um arquivo de usuario e o retorna
+	 * 
+	 * @return Retorna a instancia de usuario salva no arquivo
+	 * @throws FileNotFoundException	Joga uma exceção na pilha caso o arquivo não seja encontrado
+	 * @throws IOException		Joga uma exceção na pilha caso ocorre algum erro no procedimento de entrada/saida
+	 * @throws ClassNotFoundException Joga uma exceção na pilha caso a classe não seja encontrada
+	 */
+	
+	public Usuario carregarUsuario(String path) throws FileNotFoundException, IOException, ClassNotFoundException {
+		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
+        Usuario usuarioCarregado = (Usuario) ois.readObject();
+        ois.close();
+        
+        return usuarioCarregado;
+	}
 }
