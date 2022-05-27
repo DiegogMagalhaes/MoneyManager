@@ -1,5 +1,12 @@
 package br.com.diegogabriel.moneymanager.modelo;
 
+/**
+ * Representa o usuario do programa.
+ * 
+ * @author Diego Gabriel
+ * @version 1.0
+ */
+
 public class Usuario {
 	
 	private String nome;
@@ -7,9 +14,22 @@ public class Usuario {
 	
 	public MoneyManager moneyManager;
 	
+	/**
+	 * Retorna o salario do usuario.
+	 * 
+	 * @return	Salario do usuario
+	 */
+	
 	public Double getSalario() {
 		return salario;
 	}
+	
+	
+	/**
+	 * Recebe um valor, no qual sera o novo salario do usuario.
+	 * 
+	 * @param valor	Double referente ao novo salario do usuario.
+	 */
 	
 	public void alterarSalario(Double valor) {
 		this.salario = valor;
@@ -20,6 +40,7 @@ public class Usuario {
 		this.nome = nome;
 		this.salario = salario;
 	}
+	
 	
 	@Override
 	public String toString(){

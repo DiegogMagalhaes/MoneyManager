@@ -6,11 +6,26 @@ import java.util.Scanner;
 import br.com.diegogabriel.moneymanager.modelo.MoneyManager;
 import br.com.diegogabriel.moneymanager.modelo.Usuario;
 
-public class RuntimeMoneyManager {
+/**
+ * Classe com o objetivo de exibir interfaces e executar os metodos de MoneyManager.
+ * 
+ * @author Diego Gabriel
+ * @version 1.0
+ */
+public final class RuntimeMoneyManager {
 	
 	public Usuario usuario;
 	
-	public boolean menu(){
+	/**
+	 * Interface de entrada e saida, onde executa determinado metodo de MoneyManager dependendo do input do usuario.
+	 * 
+	 * @return							Retorna um booleano, cujo so retorna false quando selecionado a opção de sair.
+	 * @throws 	NullPointerException	Joga na pilha uma exceção caso usuario seja nulo.	
+	 */
+	
+	public boolean menu() throws NullPointerException{
+		
+		if(usuario == null) throw new NullPointerException("Usuario invalido");
 		
 		Scanner scan = new Scanner(System.in);
 		
@@ -65,17 +80,28 @@ public class RuntimeMoneyManager {
 		return false;
 	}
 	
-	public Usuario criarNovo() {
+	
+	/** 
+	 * Cria um novo Usuario e o retorna.
+	 * 
+	 * @return	Retorna um novo Usuario.
+	 * @throws IllegalArgumentException	Joga uma exceção na pilha quando, o salario for menor que zero ou nome for invalido.
+	 */
+	public Usuario criarNovo() throws IllegalArgumentException{
 		
 		Scanner scan = new Scanner(System.in);
 		String nome;
 		Double salario = 0d;
 		
 		System.out.println("Qual seu nome?");
-		nome = scan.next();
+		nome = scan.nextLine();
+		
+		if(nome.equals("")) throw new IllegalArgumentException("Nome não pode ser vazio");
 		
 		System.out.println("Quanto você recebe de salario?");
 		salario = scan.nextDouble();
+		
+		if(salario < 0) throw new IllegalArgumentException("Salario não pode ser menor que zero");
 		
 		Usuario novoUsuario = new Usuario(nome, salario);
 		
@@ -85,28 +111,6 @@ public class RuntimeMoneyManager {
 		System.out.print("\n\n");
 
 		return novoUsuario;
-	}
-	
-	@SuppressWarnings("deprecation")
-	public final static void clearConsole()
-	{
-	    try
-	    {
-	        final String os = System.getProperty("os.name");
-
-	        if (os.contains("Windows"))
-	        {
-	            Runtime.getRuntime().exec("cls");
-	        }
-	        else
-	        {
-	            Runtime.getRuntime().exec("clear");
-	        }
-	    }
-	    catch (final Exception e)
-	    {
-	        //  Handle any exceptions.
-	    }
 	}
 
 }

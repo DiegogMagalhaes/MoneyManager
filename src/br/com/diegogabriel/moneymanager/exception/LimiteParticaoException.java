@@ -1,5 +1,12 @@
 package br.com.diegogabriel.moneymanager.exception;
 
+/**
+ * Exeção criada para casos onde uma Particao recebe um valor que excede seu limite.
+ * 
+ * @author Diego Gabriel
+ * @version 1.0
+ */
+
 public class LimiteParticaoException extends RuntimeException {
 	
 	public LimiteParticaoException(String messager) {

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"MoneyMangaer","l":"br.com.diegogabriel.moneymanager.despesas"},{"m":"MoneyMangaer","l":"br.com.diegogabriel.moneymanager.exception"},{"m":"MoneyMangaer","l":"br.com.diegogabriel.moneymanager.modelo"},{"m":"MoneyMangaer","l":"br.com.diegogabriel.moneymanager.runtime"}];updateSearchResults();

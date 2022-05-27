@@ -1,0 +1,5 @@
+module:MoneyMangaer
+br.com.diegogabriel.moneymanager.despesas
+br.com.diegogabriel.moneymanager.exception
+br.com.diegogabriel.moneymanager.modelo
+br.com.diegogabriel.moneymanager.runtime
