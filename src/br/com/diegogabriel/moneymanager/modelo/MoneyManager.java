@@ -55,6 +55,7 @@ public class MoneyManager{
 	
 	public MoneyManager(Double saldo) {
 		this.saldo = saldo;
+		saldoPrevisto = saldo;
 	}
 	
 	
@@ -240,7 +241,7 @@ public class MoneyManager{
 		
 		Scanner scan = new Scanner(System.in);
 		
-		System.out.printf("\nO novo valor do seu saldo sera: %.2f. Deseja Adicionar essa Despesa?\n\n Digite: sim ou não.\n",valor);
+		System.out.printf("\nO novo valor do seu saldo sera: %.2f. Deseja Adicionar essa Despesa?\n\nDigite: sim ou não.\n\n",valor);
 		String resposta = scan.nextLine();
 		
 		if(resposta.equals("sim")) saldoPrevisto -= valor;
