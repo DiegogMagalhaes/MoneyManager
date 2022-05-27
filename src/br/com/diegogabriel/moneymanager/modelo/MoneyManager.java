@@ -226,7 +226,7 @@ public class MoneyManager{
 	 * Esse metodo também mostra o resultado do saldo ao usuario e questiona se ele realmente deseja continuar com a adição dessa despesa.
 	 * Por fim caso o usuario queira continuar com a nova despesa o valor de saldoPrevisto é atualizado, ja prevendo como sera o valor do saldo apos pagar essa nova despesa.
 	 * 
-	 * @param valor Double				refrente ao valor da despesa que sera adicionada.
+	 * @param valor Double			refrente ao valor da despesa que sera adicionada.
 	 * @throw SaldoInsuficienteException	Joga uma exceção, quando a despesa que sera adicionada não podera ser paga com o saldo atual.
 	 * @throw IllegalArgumentException	Joga uma exceção, quando resposta do usuario for algo não esperado pelo sistema.
 	 */
