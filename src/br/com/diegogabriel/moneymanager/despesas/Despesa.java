@@ -42,12 +42,22 @@ public abstract class Despesa {
 	public Double pagar(Double saldo) throws SaldoInsuficienteException{
 		
 		Double resultado = saldo - valor;
-		if(resultado < valor) throw new SaldoInsuficienteException();
+		if(resultado > saldo) throw new SaldoInsuficienteException();
 		
 		pago = true;
 		return resultado;
 	}
 
+	
+	/**
+	 * Retorna se a conta foi paga ou não.
+	 * 
+	 * @return Retorna uma booleana indicando se a conta foi paga.
+	 */
+	public boolean foiPago() {
+		return pago;
+	}
+	
 	
 	@Override
 	public String toString() {

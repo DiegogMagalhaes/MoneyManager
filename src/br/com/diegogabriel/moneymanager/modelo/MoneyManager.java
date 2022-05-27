@@ -3,6 +3,8 @@ package br.com.diegogabriel.moneymanager.modelo;
 import br.com.diegogabriel.moneymanager.despesas.Despesa;
 import br.com.diegogabriel.moneymanager.despesas.DespesaMensal;
 import br.com.diegogabriel.moneymanager.despesas.Gasto;
+import br.com.diegogabriel.moneymanager.exception.DespesaExistenteException;
+import br.com.diegogabriel.moneymanager.exception.ParticaoExistenteException;
 import br.com.diegogabriel.moneymanager.exception.SaldoInsuficienteException;
 
 import java.io.Serializable;
@@ -70,17 +72,18 @@ public class MoneyManager{
 	
 	
 	/**
-	 * Adciona uma nova despesa ao HashSet despesas. 
+	 * Adiciona uma nova despesa ao HashSet despesas. 
 	 * Possui uma interface via console para auxiliar o usuario do programa a dar a entrada necessaria.
 	 * 
+	 * @throws Joga na pilha uma exceção quando o usuario tenta adicionar uma despesa com o mesmo nome.
 	 */
-	public void adicionarDespesa() {
+	public void adicionarDespesa() throws DespesaExistenteException {
 			
 		Double valor = 0d; 
 		String nome = "";
 		String descricao = "";
 		
-		Scanner scan = new Scanner(System.in);
+		Scanner scan = new Scanner(System.in).useLocale(Locale.US);
 		
 		
 		System.out.println("Qual tipo de despesa deseja? \n "
@@ -89,15 +92,21 @@ public class MoneyManager{
 		int tipo = 0; 
 		tipo = Integer.parseInt(scan.nextLine());
 		
-		if(tipo > 2 && tipo < 1) throw new IllegalArgumentException("O valor deve ser 1(Despesa Mensal) ou 2(Gastos)");
+		
+		if(tipo != 2 && tipo != 1) throw new IllegalArgumentException("O valor deve ser 1(Despesa Mensal) ou 2(Gastos)");
 		System.out.println("Insira um nome para a despesa: ");
 		nome = scan.nextLine();
+		
+		if(existeDespesa(nome)) throw new DespesaExistenteException();
+		
 		
 		System.out.println("De uma pequna descrição da despesa: ");
 		descricao = scan.nextLine();
 		
+		
 		System.out.println("Insira o valor da despesa: ");
 		valor = scan.nextDouble();
+		
 		
 		avaliarNovaDespesa(valor);
 		
@@ -112,7 +121,7 @@ public class MoneyManager{
 		
 		else if(tipo == tipodeDespesa.GASTOS.getValor()) 
 		{
-			Particao particao = criarParticaoGastos(valor);
+			Particao particao = escolherParticaoGastos(valor);
 			Despesa despesa = new Gasto(valor,nome,descricao,particao);
 			
 			despesas.add(despesa);
@@ -127,7 +136,7 @@ public class MoneyManager{
 	 * @param valorGasto 	Double referente ao valor da despesa, que sera descontado em sua partição caso tenha uma.
 	 * @return	 			Retorna a Particao escolhida.
 	 */
-	private Particao criarParticaoGastos(Double valorGasto) {
+	private Particao escolherParticaoGastos(Double valorGasto) {
 		
 		String particao;
 		Scanner scan = new Scanner(System.in);
@@ -137,17 +146,17 @@ public class MoneyManager{
 		for(Particao x : particoes) 
 			System.out.println(x);
 		
-		System.out.print("\n Se sim insira o nome da particao: ");
+		System.out.print("\n Caso não queria apenas aperte Enter e prosiga. Se sim insira o nome da particao: ");
 		
 		particao = scan.nextLine();
 		
-		for(Particao x : particoes) {
-			if(particao.equals(x)) 
-			{
-				x.verificarLimite(valorGasto);
-				return x;
-			}
+		if(existeParticao(particao)) 
+		{
+			Particao particaoRetorno = buscarParticao(particao);
+			particaoRetorno.verificarLimite(valorGasto);
+			return particaoRetorno;
 		}
+		
 		return null;
 		
 	}
@@ -184,6 +193,16 @@ public class MoneyManager{
 		despesas.forEach(despesa -> System.out.println(despesa));
 	}
 	
+	/**
+	 * Imprime todas as despesas pagas ou não pagas, de acordo com a booleana pagas.
+	 * @param pagas	boolean no qual define se sera imprimido as despesas pagas ou não pagas
+	 */
+	public void mostrarDespesas(boolean pagas) {
+		despesas.forEach(despesa -> {
+			if(despesa.foiPago() == pagas)System.out.println(despesa);
+		});
+	}
+	
 	
 	/**
 	 * Recebe como parametro o nome de uma despesa, na qual sera paga. 
@@ -192,27 +211,63 @@ public class MoneyManager{
 	 */
 	
 	public void pagarDespesas(String nome) {
-		despesas.forEach(despesa ->
-		{
-			if(despesa.equals(nome)) saldo = despesa.pagar(saldo);
-		});
-		
+		saldo = buscarDespesa(nome).pagar(saldo);
 	}
-
+	
+	
+	/**
+	 * Busca e retorna uma despesa no HashSet despesas
+	 * 
+	 * @param nome						Nome da despesa a ser buscada
+	 * @return							Retorna a despesa buscada
+	 * @throws NullPointerException		Joga uma exceção na pilha quando a despesa não for encontrada
+	 */
+	private Despesa buscarDespesa(String nome) throws NullPointerException{
+		
+		for(Despesa despesa : despesas)
+		{
+			if(despesa.equals(nome))return despesa;
+		}
+		
+		throw new NullPointerException("Despesa não encontrada");
+	}
+	
+	
+	/**
+	 * Verifica se existe uma Despesa com o mesmo nome no HashSet despesas.
+	 * 
+	 * @param nome 	String que representa o nome que sera procurado em despesas.
+	 * @return		retorna true se existir despesa com o msm nome e falso para caso não.
+	 */
+	
+	private boolean existeDespesa(String nome) {
+		
+		try{
+			buscarDespesa(nome);
+		}
+		catch(RuntimeException ex) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	
 	/**
 	 * Cria uma nova Particao e adiciona ao HashSet particoes.
-	 * 
+	 * @throws ParticaoExistenteException	Joga uma exceção na pilha, quando inserido um nome repetido de partição.
 	 */
 	
-	public void adicionarParticao() {
+	public void adicionarParticao() throws ParticaoExistenteException {
 		Double limite = 0d; 
 		String ID = "";
 		
-		Scanner scan = new Scanner(System.in);
+		Scanner scan = new Scanner(System.in).useLocale(Locale.US);
 		
 		System.out.println("Insira o nome da partição: ");
 		ID = scan.nextLine();
+		
+		if(existeParticao(ID)) throw new ParticaoExistenteException();
 		
 		System.out.println("Insira o valor limite alocado a essa particao: ");
 		limite = scan.nextDouble();
@@ -221,6 +276,43 @@ public class MoneyManager{
 		particoes.add(novaParticao);
 	}
 	
+	
+	/**
+	 * Busca e retorna uma partição no HashSet particoes
+	 * 
+	 * @param nome						Nome da partição a ser buscada
+	 * @return							Retorna a Particao buscada
+	 * @throws NullPointerException		Joga uma exceção na pilha quando a particao não for encontrada
+	 */
+	private Particao buscarParticao(String nome) throws NullPointerException{
+		
+		for(Particao particao : particoes)
+		{
+			if(particao.equals(nome))return particao;
+		}
+		
+		throw new NullPointerException("Particao não encontrada");
+	}
+	
+	
+	/**
+	 * Verifica se existe uma Particao com o mesmo nome no HashSet particoes.
+	 * 
+	 * @param nome 	String que representa o nome que sera procurado em particoes.
+	 * @return		retorna true se existir a partição com o msm nome e falso para caso não.
+	 */
+	
+	private boolean existeParticao(String nome) {
+		
+		try{
+			buscarParticao(nome);
+		}
+		catch(RuntimeException ex) {
+			return false;
+		}
+		
+		return true;
+	}
 	
 	/**
 	 * Avalia se uma despesa a ser adicionada pode ser paga com o valor previsto do saldo apos ter pago todas despesas.
@@ -237,17 +329,19 @@ public class MoneyManager{
 		if(saldo - valor < 0) 
 			throw new SaldoInsuficienteException(); 
 		else if(saldoPrevisto - valor < 0) 
-			throw new SaldoInsuficienteException("Não é possivel adicionar uma nova despesa, pois ela não podera ser paga, considerando o valor a ser pago das outras depesas.");
+			throw new SaldoInsuficienteException("Essa despesa não pode ser paga com o saldo vigente, considerando o valor a ser pago das outras depesas.");
 		
 		Scanner scan = new Scanner(System.in);
 		
-		System.out.printf("\nO novo valor do seu saldo sera: %.2f. Deseja Adicionar essa Despesa?\n\nDigite: sim ou não.\n\n",valor);
+		System.out.printf("\nO O seu saldo, tendo em conta todas as contas acumuladas pagas ou não pagas sera: %.2f.\n\n Deseja Adicionar essa Despesa?\n\nDigite: sim ou não.\n\n",saldoPrevisto - valor);
 		String resposta = scan.nextLine();
 		
 		if(resposta.equals("sim")) saldoPrevisto -= valor;
 		else if(resposta.equals("não")) System.out.println("\n\nDespesa não adicionada\n\n");
 		else throw new IllegalArgumentException("A resposta deve ser sim ou não");
 	}
+	
+	
 
 	
 	@Override

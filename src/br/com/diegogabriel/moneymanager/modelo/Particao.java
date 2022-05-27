@@ -54,14 +54,14 @@ public class Particao {
 	
 	@Override
 	public String toString(){
-		return "ID: " + ID + " | gastoMes: " + gastoMes + " | limite: " + limite;
+		return "[ID: " + ID + " | gastoMes: " + gastoMes + " | limite: " + limite + "]";
 	}
 	
 	
 	@Override
 	public boolean equals(Object obj) {
-		Particao outraParticao = (Particao) obj;
-		return this.ID.equals(outraParticao.ID);
+		String outraParticao = (String) obj;
+		return this.ID.equals(outraParticao);
 	}
 	
 	

@@ -1,6 +1,7 @@
 package br.com.diegogabriel.moneymanager.runtime;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Scanner;
 
 import br.com.diegogabriel.moneymanager.modelo.MoneyManager;
@@ -27,7 +28,7 @@ public final class RuntimeMoneyManager {
 		
 		if(usuario == null) throw new NullPointerException("Usuario invalido");
 		
-		Scanner scan = new Scanner(System.in);
+		Scanner scan = new Scanner(System.in).useLocale(Locale.US);
 		
 		System.out.println("______________________________________________");
 		System.out.println(usuario);
@@ -53,10 +54,11 @@ public final class RuntimeMoneyManager {
 			return true;
 				
 		case 2: 
-			usuario.moneyManager.mostrarDespesas();
-			System.out.println("\n\nInsira o nome da despesa que deseja pagar:");
-			Scanner scanDespesa = new Scanner(System.in);
-			String despesaNome = scanDespesa.next();
+			usuario.moneyManager.mostrarDespesas(false);
+			
+			System.out.println("\n\nInsira o nome da despesa que deseja pagar:");	
+			String despesaNome = scan.nextLine();
+			
 			usuario.moneyManager.pagarDespesas(despesaNome);
 			return true;
 		
@@ -70,8 +72,7 @@ public final class RuntimeMoneyManager {
 			
 		case 7:
 			System.out.println("Insira o valor a ser adicionado:");
-			Scanner scanValor = new Scanner(System.in);
-			Double valor = scanValor.nextDouble();
+			Double valor = scan.nextDouble();
 			usuario.moneyManager.adicionarSaldo(valor);
 			return true;
 
@@ -89,7 +90,7 @@ public final class RuntimeMoneyManager {
 	 */
 	public Usuario criarNovo() throws IllegalArgumentException{
 		
-		Scanner scan = new Scanner(System.in);
+		Scanner scan = new Scanner(System.in).useLocale(Locale.US);
 		String nome;
 		Double salario = 0d;
 		
