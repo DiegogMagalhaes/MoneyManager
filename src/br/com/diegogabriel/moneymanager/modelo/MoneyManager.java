@@ -65,9 +65,11 @@ public class MoneyManager implements Serializable{
 	 * Recebe um valor para adicionar ao saldo.
 	 * 
 	 * @param valor	Double que sera adicionado ao saldo vigente.
+	 * @throws IllegalArgumentException lança uma exceção na pilha quando receber um valor menor ou igual a 0.
 	 */
-	public void adicionarSaldo(Double valor) {
-		saldo += valor;
+	public void adicionarSaldo(Double valor) throws IllegalArgumentException{
+		if(valor > 0)saldo += valor;
+		else throw new IllegalArgumentException("valor invalido, porfavor insira um valor maior que 0");
 	}
 	
 	
@@ -75,7 +77,7 @@ public class MoneyManager implements Serializable{
 	 * Adiciona uma nova despesa ao HashSet despesas. 
 	 * Possui uma interface via console para auxiliar o usuario do programa a dar a entrada necessaria.
 	 * 
-	 * @throws Joga na pilha uma exceção quando o usuario tenta adicionar uma despesa com o mesmo nome.
+	 * @throws DespesaExistenteException Joga na pilha uma exceção quando o usuario tenta adicionar uma despesa com o mesmo nome.
 	 */
 	public void adicionarDespesa() throws DespesaExistenteException {
 			

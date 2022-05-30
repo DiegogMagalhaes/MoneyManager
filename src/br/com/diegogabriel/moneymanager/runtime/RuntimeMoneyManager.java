@@ -7,6 +7,8 @@ import br.com.diegogabriel.moneymanager.modelo.MoneyManager;
 import br.com.diegogabriel.moneymanager.modelo.Usuario;
 
 import java.io.*;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 
 /**
  * Classe com o objetivo de exibir interfaces e executar os metodos de MoneyManager.
@@ -79,7 +81,7 @@ public final class RuntimeMoneyManager {
 			return true;
 		
 		case 8:
-			System.out.println("Digite o caminho em que o arquivo sera salvo: ");
+			System.out.println("Nomeie o arquivo a ser salvo: ");
 			String path = scan.nextLine();
 
 			salvarUsuario(path);
@@ -96,6 +98,7 @@ public final class RuntimeMoneyManager {
 	 * @return	Retorna um novo Usuario.
 	 * @throws IllegalArgumentException	Joga uma exceção na pilha quando, o salario for menor que zero ou nome for invalido.
 	 */
+	
 	public Usuario criarNovo() throws IllegalArgumentException{
 		
 		Scanner scan = new Scanner(System.in).useLocale(Locale.US);
@@ -124,30 +127,45 @@ public final class RuntimeMoneyManager {
 
 	
 	/**
-	 * Salva o usuario em um caminho expecificado pelo proprio usuario
+	 * Salva o usuario em um arquivo com nome expecificado pelo usuario. 
+	 * O arquivo sera salvo sempre em C:/MoneyManager.
+	 * Caso um arquivo com o mesmo nome de um antigo seja salvo, esse arquivo é sobre escrito.
 	 * 
-	 * @param path			String referente ao caminho onde o arquivo sera salvo
+	 * @param name			String referente ao nome do arquivo que sera salvo
 	 * @throws IOException	Joga uma exceção na pilha caso ocorre algum erro no procedimento de entrada/saida
 	 */
 	
-	public void salvarUsuario(String path) throws IOException {
+	public void salvarUsuario(String name) throws IOException {
+		
+		String path = "C:/MoneyManager/"+name;
+
+		try {	
+			File diretorio = new File("C:/MoneyManager/");
+			if(!diretorio.exists())diretorio.mkdir();
+		}
+		catch(Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
-        oos.writeObject(this.usuario);
-        oos.close();
+		oos.writeObject(this.usuario);
+		
+        oos.close();	
 	}
 	
 	
 	/**
 	 * Carrega um arquivo de usuario e o retorna
 	 * 
+	 * @param name		String referente ao nome do arquivo que sera salvo
 	 * @return Retorna a instancia de usuario salva no arquivo
 	 * @throws FileNotFoundException	Joga uma exceção na pilha caso o arquivo não seja encontrado
 	 * @throws IOException		Joga uma exceção na pilha caso ocorre algum erro no procedimento de entrada/saida
 	 * @throws ClassNotFoundException Joga uma exceção na pilha caso a classe não seja encontrada
 	 */
 	
-	public Usuario carregarUsuario(String path) throws FileNotFoundException, IOException, ClassNotFoundException {
-		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
+	public Usuario carregarUsuario(String name) throws FileNotFoundException, IOException, ClassNotFoundException {
+		ObjectInputStream ois = new ObjectInputStream(new FileInputStream("C:/MoneyManager/"+name));
         Usuario usuarioCarregado = (Usuario) ois.readObject();
         ois.close();
         

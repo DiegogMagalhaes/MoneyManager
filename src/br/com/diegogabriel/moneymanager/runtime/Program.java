@@ -14,6 +14,7 @@ import java.util.Scanner;
 public final class Program {
 	
 	public static void main(String args[]) throws FileNotFoundException, ClassNotFoundException, IOException {		
+		
 		RuntimeMoneyManager rmm = new RuntimeMoneyManager();
 		inicializar(rmm);
 		boolean running = true;
@@ -43,31 +44,46 @@ public final class Program {
 		
 		
 		Scanner scan = new Scanner(System.in);
+		boolean inicializou = false;
 		
 		System.out.println("------------------------------MONEY MANAGER------------------------------");
 		System.out.println("Seja bem vindo! aqui você pode ter mais controle sobre o seu dinheiro.");
 		System.out.println("Sempre que for fazer uma nova despesa utilize o money manager para tanto ter mais controle quanto analizar se vale a pena\n\n");
-
-		System.out.println("Selecione uma opção: ");
-		System.out.println("1: Criar um novo usuario");
-		System.out.println("2: Carregar Usuario");
 		
-		int choice = Integer.parseInt(scan.nextLine());
+		while(!inicializou) 
+		{
 		
-		switch(choice) {
-			case 1: 
-				rmm.usuario = rmm.criarNovo();
-			break;
+			System.out.println("Selecione uma opção: ");
+			System.out.println("1: Criar um novo usuario");
+			System.out.println("2: Carregar Usuario");
 			
-			case 2: 
-				System.out.println("Digite o caminho do arquivo: ");
-				String path = scan.nextLine();
-
-				rmm.usuario = rmm.carregarUsuario(path);
-			break;
+			try {
+			
+				int choice = Integer.parseInt(scan.nextLine());
+				if(choice != 2 && choice != 1) throw new IllegalArgumentException("O valor deve ser 1(Criar um novo usuario) ou 2(Carregar Usuario2)");
 				
-		}
+				switch(choice) {
+					case 1: 
+						rmm.usuario = rmm.criarNovo();
+						inicializou = true;
+					break;
+					
+					case 2: 
+						System.out.println("Digite o nome do arquivo: ");
+						String path = scan.nextLine();
 		
+						rmm.usuario = rmm.carregarUsuario(path);
+						inicializou = true;
+					break;
+						
+				}
+			
+			}
+			
+			catch(Exception ex) {
+				System.out.println(ex.getMessage() + "\n\n\n");
+			}
+		}
 		
 	}
 
