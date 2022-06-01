@@ -36,9 +36,9 @@ public abstract class Despesa implements Serializable{
 	/**
 	 * Ao ser chamada, se o saldo for suficiente a despesa é paga e retorna o valor do saldo restante.
 	 * 
-	 * @param 	saldo 						Valor de saldo disponivel que o MoneyManager possui
-	 * @return								retorna o resultado do saldo subtraido pelo valor da despesa
-	 * @throws	SaldoInsuficienteException 	Joga na pilha uma exceção, caso o saldo não seja suficiente para pagar.
+	 * @param  saldo Valor de saldo disponivel que o MoneyManager possui
+	 * @return retorna o resultado do saldo subtraido pelo valor da despesa
+	 * @throws SaldoInsuficienteException Joga na pilha uma exceção, caso o saldo não seja suficiente para pagar.
 	 */
 	public Double pagar(Double saldo) throws SaldoInsuficienteException{
 		
