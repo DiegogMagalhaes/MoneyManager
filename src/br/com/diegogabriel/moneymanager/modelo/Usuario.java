@@ -19,7 +19,7 @@ public class Usuario implements Serializable{
 	/**
 	 * Retorna o salario do usuario.
 	 * 
-	 * @return	Salario do usuario
+	 * @return Salario do usuario
 	 */
 	
 	public Double getSalario() {
