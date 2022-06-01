@@ -38,8 +38,8 @@ public class Gasto extends Despesa{
 	/**
 	 * Recebe uma Particao. Essa particao sera comparada atravez do metodo da classe Object equals. 
 	 * 
-	 * @param particao	Particao a ser comparada.
-	 * @return	Um booleano indicando se a Particao recebida é igual a Particao do objeto de Gastos.
+	 * @param particao Particao a ser comparada.
+	 * @return Um booleano indicando se a Particao recebida é igual a Particao do objeto de Gastos.
 	 */
 	
 	private boolean verificarParticao(Particao particao) {
