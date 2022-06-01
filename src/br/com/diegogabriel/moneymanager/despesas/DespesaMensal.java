@@ -20,8 +20,8 @@ public class DespesaMensal extends Despesa  {
 	/**
 	 * Construtor padão de DespesaMensal
 	 * 
-	 * @param valor 		Double responsavel pelo valor referente a despesa.
-	 * @param nome			String responsavel pelo nome da despesa. 
+	 * @param valor 	Double responsavel pelo valor referente a despesa.
+	 * @param nome		String responsavel pelo nome da despesa. 
 	 * @param descricao 	String resposavel pela descrição da despesa.
 	 * @param dataValidade	LocalDate responvavel por salvar a data limite em que a despesa pode ser paga, sem atraso.
 	 */
@@ -34,7 +34,7 @@ public class DespesaMensal extends Despesa  {
 	/**
 	 * Verefica se a despesa esta atrasada.
 	 * 
-	 * @return	Um booleano indicando se a despesa esta ou não atrasada.
+	 * @return Um booleano indicando se a despesa esta ou não atrasada.
 	 */
 	
 	private boolean verificarAtraso() {
