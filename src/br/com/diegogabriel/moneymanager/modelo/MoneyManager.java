@@ -136,7 +136,7 @@ public class MoneyManager implements Serializable{
 	 * Disponibiliza ao usuario as partições existente para categorizar seu gasto. Então o valorGasto recebido como parametro é adiconado nos gastos mensais na partição escolhida.
 	 * 
 	 * @param valorGasto 	Double referente ao valor da despesa, que sera descontado em sua partição caso tenha uma.
-	 * @return	 			Retorna a Particao escolhida.
+	 * @return	 	Retorna a Particao escolhida.
 	 */
 	private Particao escolherParticaoGastos(Double valorGasto) {
 		
@@ -167,7 +167,7 @@ public class MoneyManager implements Serializable{
 	/**
 	 * Gera uma LocalDate atraves de uma entrada de data so usuario.
 	 * 
-	 * @return	Retorna uma LocalDate referente a uma entrada do usuario.
+	 * @return Retorna uma LocalDate referente a uma entrada do usuario.
 	 */
 	private LocalDate criarLocalDateDespesaMensal() {
 		
@@ -220,9 +220,9 @@ public class MoneyManager implements Serializable{
 	/**
 	 * Busca e retorna uma despesa no HashSet despesas
 	 * 
-	 * @param nome						Nome da despesa a ser buscada
-	 * @return							Retorna a despesa buscada
-	 * @throws NullPointerException		Joga uma exceção na pilha quando a despesa não for encontrada
+	 * @param nome			Nome da despesa a ser buscada
+	 * @return			Retorna a despesa buscada
+	 * @throws NullPointerException	Joga uma exceção na pilha quando a despesa não for encontrada
 	 */
 	private Despesa buscarDespesa(String nome) throws NullPointerException{
 		
@@ -239,7 +239,7 @@ public class MoneyManager implements Serializable{
 	 * Verifica se existe uma Despesa com o mesmo nome no HashSet despesas.
 	 * 
 	 * @param nome 	String que representa o nome que sera procurado em despesas.
-	 * @return		retorna true se existir despesa com o msm nome e falso para caso não.
+	 * @return	retorna true se existir despesa com o msm nome e falso para caso não.
 	 */
 	
 	private boolean existeDespesa(String nome) {
@@ -282,9 +282,9 @@ public class MoneyManager implements Serializable{
 	/**
 	 * Busca e retorna uma partição no HashSet particoes
 	 * 
-	 * @param nome						Nome da partição a ser buscada
-	 * @return							Retorna a Particao buscada
-	 * @throws NullPointerException		Joga uma exceção na pilha quando a particao não for encontrada
+	 * @param nome			Nome da partição a ser buscada
+	 * @return			Retorna a Particao buscada
+	 * @throws NullPointerException	Joga uma exceção na pilha quando a particao não for encontrada
 	 */
 	private Particao buscarParticao(String nome) throws NullPointerException{
 		
@@ -301,7 +301,7 @@ public class MoneyManager implements Serializable{
 	 * Verifica se existe uma Particao com o mesmo nome no HashSet particoes.
 	 * 
 	 * @param nome 	String que representa o nome que sera procurado em particoes.
-	 * @return		retorna true se existir a partição com o msm nome e falso para caso não.
+	 * @return	retorna true se existir a partição com o msm nome e falso para caso não.
 	 */
 	
 	private boolean existeParticao(String nome) {
