@@ -345,8 +345,6 @@ public class MoneyManager implements Serializable{
 	}
 	
 	
-
-	
 	@Override
 	public String toString() {
 		return "Saldo: " + saldo.toString();

@@ -34,12 +34,54 @@ public abstract class Despesa implements Serializable{
 	
 	
 	/**
+	 * @return valor da despesa
+	 */
+	
+	public Double getValor() {
+		return valor;
+	}
+
+	/**
+	 * @return o nome da despesa
+	 */
+	
+	public String getNome() {
+		return nome;
+	}
+
+	/**
+	 * @return a descrição da despesa
+	 */
+	
+	public String getDescricao() {
+		return descricao;
+	}
+	
+		
+	/**
+	 * Construtor de Despesa, usado para carregar uma despesa ja existente de um arquivo ou banco de dados
+	 * 
+	 * @param valor 	Double responsavel pelo valor referente a despesa.
+	 * @param nome		String responsavel pelo nome da despesa. Esse nome não pode ser repetido.
+	 * @param descricao	String responsavel pela descrição da despesa.
+	 * @param pago		boolean responsavel pela informação se a despesa foi paga ou não.
+	 */
+	public Despesa(Double valor, String nome, String descricao, boolean pago) {
+		this.valor = valor;
+		this.nome = nome;
+		this.descricao = descricao;
+		this.pago = pago;
+	}
+
+
+	/**
 	 * Ao ser chamada, se o saldo for suficiente a despesa é paga e retorna o valor do saldo restante.
 	 * 
 	 * @param 	saldo 						Valor de saldo disponivel que o MoneyManager possui
 	 * @return								retorna o resultado do saldo subtraido pelo valor da despesa
 	 * @throws	SaldoInsuficienteException 	Joga na pilha uma exceção, caso o saldo não seja suficiente para pagar.
 	 */
+	
 	public Double pagar(Double saldo) throws SaldoInsuficienteException{
 		
 		Double resultado = saldo - valor;
@@ -73,8 +115,8 @@ public abstract class Despesa implements Serializable{
 	
 	@Override
 	public boolean equals(Object obj) {
-		String nome = (String) obj;
-		return this.nome.equals(nome);
+		Despesa nome = (Despesa) obj;
+		return this.nome.equals(nome.getNome());
 	}
 	
 	

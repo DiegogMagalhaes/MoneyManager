@@ -17,17 +17,50 @@ import java.io.Serializable;
 
 public class Particao implements Serializable{
 
-	private String ID;
+	private String nome;
 	private Double gastoMes;
 	private Double limite;
 	
-	public Particao(String ID, Double limite) {
-		this.ID = ID;
+	public Particao(String nome, Double limite) {
+		this.nome = nome;
 		this.limite = limite;
 		gastoMes = 0d;
 	}
 	
 	
+	/**
+	 * Retorna o nome da partição.
+	 * 
+	 * @return	nome da partição
+	 */
+	
+	public String getNome() {
+		return nome;
+	}
+
+	
+	/**
+	 * Retorna o Gasto Mensal) da partição.
+	 * 
+	 * @return	gastoMes da partição
+	 */
+	
+	public Double getGastoMes() {
+		return gastoMes;
+	}
+
+	
+	/**
+	 * Retorna o limite da partição.
+	 * 
+	 * @return	limite da partição
+	 */
+	
+	public Double getLimite() {
+		return limite;
+	}
+
+
 	/**
 	 * Recebe um valor para ser adicionado aos gastos mensais feitos nessa partição.
 	 * 
@@ -55,20 +88,23 @@ public class Particao implements Serializable{
 	
 	@Override
 	public String toString(){
-		return "[ID: " + ID + " | gastoMes: " + gastoMes + " | limite: " + limite + "]";
+		return "[nome: " + nome + " | gastoMes: " + gastoMes + " | limite: " + limite + "]";
 	}
 	
 	
 	@Override
 	public boolean equals(Object obj) {
-		String outraParticao = (String) obj;
-		return this.ID.equals(outraParticao);
+		Particao outraParticao = (Particao) obj;
+		return this.nome.equals(outraParticao.getNome());
 	}
 	
+	public boolean equals(String s) {
+		return this.nome.equals(s);
+	}
 	
 	@Override
 	public int hashCode() {
-		return ID.hashCode();
+		return nome.hashCode();
 	}
 	
 }

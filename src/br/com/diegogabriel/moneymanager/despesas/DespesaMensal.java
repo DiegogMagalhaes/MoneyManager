@@ -32,6 +32,31 @@ public class DespesaMensal extends Despesa  {
 	
 	
 	/**
+	 * Construtor de DespesaMensal, usado para carregar uma despesa ja existente de um arquivo ou banco de dados
+	 * 
+	 * @param valor 	Double responsavel pelo valor referente a despesa.
+	 * @param nome		String responsavel pelo nome da despesa. Esse nome não pode ser repetido.
+	 * @param descricao	String responsavel pela descrição da despesa.
+	 * @param pago		boolean responsavel pela informação se a despesa foi paga ou não.
+	 * @param dataValidade LocalDate refrente a validade da despesa
+	 */
+	
+	public DespesaMensal(Double valor, String nome, String descricao, boolean pago, LocalDate dataValidade) {
+		super(valor,nome,descricao,pago);
+		this.dataValidade = dataValidade; 
+	}
+	
+	
+	/** 
+	 * @return data de validade da despesa
+	 */
+	
+	public LocalDate getData() {
+		return dataValidade;
+	}
+	
+	
+	/**
 	 * Verefica se a despesa esta atrasada.
 	 * 
 	 * @return	Um booleano indicando se a despesa esta ou não atrasada.

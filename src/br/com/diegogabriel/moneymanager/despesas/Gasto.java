@@ -1,5 +1,7 @@
 package br.com.diegogabriel.moneymanager.despesas;
 
+import java.time.LocalDate;
+
 import br.com.diegogabriel.moneymanager.exception.SaldoInsuficienteException;
 import br.com.diegogabriel.moneymanager.modelo.Particao;
 
@@ -21,6 +23,16 @@ public class Gasto extends Despesa{
 		super(valor,nome,descricao);
 	}
 	
+	
+	/** 
+	 * @return Retorna a particao de gastos
+	 */
+	
+	public Particao getParticao() {
+		return particao;
+	}
+	
+	
 	/**
 	 * Construtor padrão de Gasto
 	 * 
@@ -32,6 +44,22 @@ public class Gasto extends Despesa{
 	public Gasto(Double valor, String nome, String descricao, Particao particao) {
 		super(valor,nome,descricao);
 		this.particao = particao;
+	}
+	
+	
+	/**
+	 * Construtor de Gasto, usado para carregar uma despesa ja existente de um arquivo ou banco de dados
+	 * 
+	 * @param valor 	Double responsavel pelo valor referente a despesa.
+	 * @param nome		String responsavel pelo nome da despesa. Esse nome não pode ser repetido.
+	 * @param descricao	String responsavel pela descrição da despesa.
+	 * @param pago		boolean responsavel pela informação se a despesa foi paga ou não.
+	 * @param particao  Particao refrente a partição da despesa
+	 */
+	
+	public Gasto(Double valor, String nome, String descricao, boolean pago, Particao particao) {
+		super(valor,nome,descricao,pago);
+		this.particao = particao; 
 	}
 	
 	
