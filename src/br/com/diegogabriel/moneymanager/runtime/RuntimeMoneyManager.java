@@ -23,8 +23,8 @@ public final class RuntimeMoneyManager {
 	/**
 	 * Interface de entrada e saida, onde executa determinado metodo de MoneyManager dependendo do input do usuario.
 	 * 
-	 * @return							Retorna um booleano, cujo so retorna false quando selecionado a opção de sair.
-	 * @throws 	NullPointerException	Joga na pilha uma exceção caso usuario seja nulo.	
+	 * @return Retorna um booleano, cujo so retorna false quando selecionado a opção de sair.
+	 * @throws NullPointerException	Joga na pilha uma exceção caso usuario seja nulo.	
 	 * @throws IOException 
 	 */
 	
@@ -95,8 +95,8 @@ public final class RuntimeMoneyManager {
 	/** 
 	 * Cria um novo Usuario e o retorna.
 	 * 
-	 * @return	Retorna um novo Usuario.
-	 * @throws IllegalArgumentException	Joga uma exceção na pilha quando, o salario for menor que zero ou nome for invalido.
+	 * @return Retorna um novo Usuario.
+	 * @throws IllegalArgumentException Joga uma exceção na pilha quando, o salario for menor que zero ou nome for invalido.
 	 */
 	
 	public Usuario criarNovo() throws IllegalArgumentException{
@@ -131,8 +131,8 @@ public final class RuntimeMoneyManager {
 	 * O arquivo sera salvo sempre em C:/MoneyManager.
 	 * Caso um arquivo com o mesmo nome de um antigo seja salvo, esse arquivo é sobre escrito.
 	 * 
-	 * @param name			String referente ao nome do arquivo que sera salvo
-	 * @throws IOException	Joga uma exceção na pilha caso ocorre algum erro no procedimento de entrada/saida
+	 * @param name String referente ao nome do arquivo que sera salvo
+	 * @throws IOException Joga uma exceção na pilha caso ocorre algum erro no procedimento de entrada/saida
 	 */
 	
 	public void salvarUsuario(String name) throws IOException {
@@ -157,10 +157,10 @@ public final class RuntimeMoneyManager {
 	/**
 	 * Carrega um arquivo de usuario e o retorna
 	 * 
-	 * @param name		String referente ao nome do arquivo que sera salvo
+	 * @param name String referente ao nome do arquivo que sera salvo
 	 * @return Retorna a instancia de usuario salva no arquivo
-	 * @throws FileNotFoundException	Joga uma exceção na pilha caso o arquivo não seja encontrado
-	 * @throws IOException		Joga uma exceção na pilha caso ocorre algum erro no procedimento de entrada/saida
+	 * @throws FileNotFoundException  Joga uma exceção na pilha caso o arquivo não seja encontrado
+	 * @throws IOException		  Joga uma exceção na pilha caso ocorre algum erro no procedimento de entrada/saida
 	 * @throws ClassNotFoundException Joga uma exceção na pilha caso a classe não seja encontrada
 	 */
 	
