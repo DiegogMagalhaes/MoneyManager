@@ -28,6 +28,13 @@ public class Particao implements Serializable{
 	}
 	
 	
+	public Particao(String nome, Double limite, Double gastoMes) {
+		this.nome = nome;
+		this.limite = limite;
+		this.gastoMes = gastoMes;
+	}
+	
+	
 	/**
 	 * Retorna o nome da partição.
 	 * 

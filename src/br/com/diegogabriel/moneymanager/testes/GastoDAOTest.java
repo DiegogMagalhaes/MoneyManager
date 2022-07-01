@@ -16,16 +16,17 @@ public class GastoDAOTest {
 public static void main(String[] args) throws SQLException {
 		
 		Particao p = null;
-		Gasto gasto  = new Gasto (146d,"cartão mugi","mugi fofa",true,p);
+		Gasto gasto  = new Gasto (146d,"cartã mugi","mugi fofa",true,p);
 		
 		ConnectionPool pool = new ConnectionPool();
 			
 		try(Connection con = pool.getConnection()){
 			GastoDAO dao = new GastoDAO(con);
 			
-			dao.inserir(gasto);
+			ConnectionPool pool2 = new ConnectionPool();
+			
 				
-			Set<Gasto> gastos = dao.getGasto();
+			Set<Gasto> gastos = dao.getGasto("mugi");
 				
 			gastos.forEach(u -> System.out.println(u));
 		}

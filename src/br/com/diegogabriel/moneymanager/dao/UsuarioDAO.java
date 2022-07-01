@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import br.com.diegogabriel.moneymanager.modelo.Usuario;
+import br.com.diegogabriel.moneymanager.modelo.UsuarioDB;
 
 /**
  * Uma classe que interage com o banco de dados, operando na table Usuario.
@@ -32,7 +33,7 @@ public class UsuarioDAO {
 	 * @throws SQLException 
 	 */
 	
-	public void inserir(Usuario usuario) throws SQLException {
+	public void inserir(UsuarioDB usuario) throws SQLException {
 		
 		String sql = "insert into Usuario (nome, salario) values (?,?)";
 		
@@ -51,9 +52,9 @@ public class UsuarioDAO {
 	 * @return Um Set de usuarios presentes na tabela Usuario
 	 * @throws SQLException Lança uma exceção na pilha quando ocorrer algum erro referente ao sql
 	 */
-	public Set<Usuario> getUsuarios() throws SQLException{
+	public Set<UsuarioDB> getUsuarios() throws SQLException{
 		
-		Set<Usuario> usuarios = new HashSet<>();
+		Set<UsuarioDB> usuarios = new HashSet<>();
 		String sql = "select * from Usuario";
 		
 		try(PreparedStatement stmt = con.prepareStatement(sql)){
@@ -66,6 +67,22 @@ public class UsuarioDAO {
 	}
 	
 	
+	public UsuarioDB searchUsuarioByName(String nome) throws SQLException {
+		Set<UsuarioDB> usuarios = new HashSet<>();
+		String sql = "select * from Usuario where nome = " + "'" + nome + "'";
+		
+		try(PreparedStatement stmt = con.prepareStatement(sql)){
+			stmt.execute();
+			resultSetToUsuario(stmt, usuarios);
+		}
+		
+		for(UsuarioDB u : usuarios) return u;
+		
+		throw new NullPointerException("Usuario não encontrado");
+		
+		}
+	
+	
 	/**
 	 * Pega um Resultado de um PreparedStatement e os adiciona a um Set de Usuario
 	 * 
@@ -73,13 +90,13 @@ public class UsuarioDAO {
 	 * @param usuarios Set de Usuario no qual sera adicionado os usuarios provindos do resultado do PreparedStatement
 	 * @throws SQLException Lança uma exceção na pilha quando ocorrer algum erro referente ao sql
 	 */
-	private void resultSetToUsuario(PreparedStatement stmt, Set<Usuario> usuarios) throws SQLException {
+	private void resultSetToUsuario(PreparedStatement stmt, Set<UsuarioDB> usuarios) throws SQLException {
 		
 		try(ResultSet rs = stmt.getResultSet()){
 			while(rs.next()) {
 				String nome = rs.getString("nome");
 				Double salario = rs.getDouble("salario");
-				Usuario usuario = new Usuario(nome,salario);
+				UsuarioDB usuario = new UsuarioDB(nome,salario);
 				usuarios.add(usuario);
 			}
 		}

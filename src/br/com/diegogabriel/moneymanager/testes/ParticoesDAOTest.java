@@ -19,9 +19,9 @@ public class ParticoesDAOTest {
 		try(Connection con = pool.getConnection()){
 			ParticaoDAO dao = new ParticaoDAO(con);
 			
-			dao.inserir(particao);
+			dao.inserir(particao,"mugi");
 				
-			Set<Particao> particoes = dao.getParticao();
+			Set<Particao> particoes = dao.getParticao("mugi");
 				
 			particoes.forEach(u -> System.out.println(u));
 		}

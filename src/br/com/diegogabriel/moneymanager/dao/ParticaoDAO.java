@@ -34,14 +34,33 @@ public class ParticaoDAO {
 	 * @throws SQLException 
 	 */
 	
-	public void inserir(Particao particao) throws SQLException {
+	public void inserir(Particao particao, String usuario) throws SQLException {
 		
-		String sql = "insert into Particao(nome, limite, gastoMes) values (?,?,?)";
+		String sql = "insert into Particao(nome, limite, gastoMes, usuario) values (?,?,?,?)";
 		
 		try(PreparedStatement stmt = con.prepareStatement(sql)){
 			stmt.setString(1, particao.getNome());
 			stmt.setDouble(2, particao.getLimite());
 			stmt.setDouble(3, particao.getGastoMes());
+			stmt.setString(4, usuario);
+			stmt.execute();
+		}
+		
+	}
+	
+	
+	public void atualizar(Particao particao, String usuario) throws SQLException {
+		
+		String sql = "UPDATE PARTICAO\r\n"
+					+ "SET\r\n"
+					+ "gastoMes = "  +  particao.getGastoMes() + " ,\r\n"
+					+ "limite = " + particao.getLimite() + "\r\n"
+					+ "WHERE\r\n"
+					+ "USUARIO = "+ "'" + usuario + "' AND "
+					+ "NOME = "+ "'" + particao.getNome()+ "'";
+		
+		
+		try(PreparedStatement stmt = con.prepareStatement(sql)){
 			stmt.execute();
 		}
 		
@@ -54,10 +73,11 @@ public class ParticaoDAO {
 	 * @return Um Set de partiçoes presentes na tabela Particao
 	 * @throws SQLException Lança uma exceção na pilha quando ocorrer algum erro referente ao sql
 	 */
-	public Set<Particao> getParticao() throws SQLException{
+	public Set<Particao> getParticao(String usuario) throws SQLException{
 		
 		Set<Particao> particoes = new HashSet<>();
-		String sql = "select * from Particao";
+		String sql = "select * from Particao\r\n"
+					+ "Where usuario = " + "'" + usuario + "'";
 		
 		try(PreparedStatement stmt = con.prepareStatement(sql)){
 			stmt.execute();
@@ -78,11 +98,13 @@ public class ParticaoDAO {
 	 * @throws SQLException
 	 */
 	
-	public Particao searchParticaoByName(String nome) throws SQLException{
+	public Particao searchParticaoByName(String nome, String usuario) throws SQLException{
 		
 		Set<Particao> particoes = new HashSet<>();
-		String sql = "select * from Particao where nome = " + "'" + nome +"'";
-		//O PROBLEMA ESTA NESSE COMANDO
+		String sql = "select * from Particao where nome = " + "'" + nome +"'"
+					+ " AND usuario = " + "'" + usuario + "'";
+		
+		
 		try(PreparedStatement stmt = con.prepareStatement(sql)){
 			stmt.execute();
 			resultSetToParticao(stmt, particoes);
@@ -107,8 +129,9 @@ public class ParticaoDAO {
 		try(ResultSet rs = stmt.getResultSet()){
 			while(rs.next()) {
 				String nome = rs.getString("nome");
+				Double gastoMes = rs.getDouble("gastoMes");
 				Double limite = rs.getDouble("limite");
-				Particao particao = new Particao(nome,limite);
+				Particao particao = new Particao(nome,limite,gastoMes);
 				particoes.add(particao);
 			}
 		}

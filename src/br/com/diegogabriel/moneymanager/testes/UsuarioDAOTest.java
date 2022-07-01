@@ -12,18 +12,18 @@ public class UsuarioDAOTest {
 
 	public static void main (String[] args) throws SQLException {
 		
-		Usuario usuario = new Usuario("mio", 3061d);
+		Usuario usuario = new Usuario("mugi", 3061d);
 		
 		ConnectionPool pool = new ConnectionPool();
 		
 		try(Connection con = pool.getConnection()){
 			UsuarioDAO dao = new UsuarioDAO(con);
 			
-			dao.inserir(usuario);
+			//dao.inserir(usuario);
 			
-			Set<Usuario> usuarios = dao.getUsuarios();
+			//Set<Usuario> usuarios = dao.getUsuarios();
 			
-			usuarios.forEach(u -> System.out.println(u));
+			//usuarios.forEach(u -> System.out.println(u));
 		}
 	}
 	

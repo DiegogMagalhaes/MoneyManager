@@ -24,7 +24,7 @@ public final class Program {
 			try{
 				running = rmm.menu();
 			}
-			catch(RuntimeException ex){
+			catch(Exception ex){
 				System.out.println(ex.getMessage()); 
 			}
 		}

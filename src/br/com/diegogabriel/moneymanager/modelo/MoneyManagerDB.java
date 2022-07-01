@@ -1,5 +1,19 @@
 package br.com.diegogabriel.moneymanager.modelo;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Scanner;
+import java.util.Set;
+
+import br.com.diegogabriel.moneymanager.conexao.ConnectionPool;
+import br.com.diegogabriel.moneymanager.dao.DespesaDAO;
+import br.com.diegogabriel.moneymanager.dao.DespesaMensalDAO;
+import br.com.diegogabriel.moneymanager.dao.GastoDAO;
+import br.com.diegogabriel.moneymanager.dao.ParticaoDAO;
 import br.com.diegogabriel.moneymanager.despesas.Despesa;
 import br.com.diegogabriel.moneymanager.despesas.DespesaMensal;
 import br.com.diegogabriel.moneymanager.despesas.Gasto;
@@ -7,48 +21,82 @@ import br.com.diegogabriel.moneymanager.exception.DespesaExistenteException;
 import br.com.diegogabriel.moneymanager.exception.ParticaoExistenteException;
 import br.com.diegogabriel.moneymanager.exception.SaldoInsuficienteException;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+public class MoneyManagerDB implements IMoneyManager {
 
-/**
- * Classe responsavel por fazer todo controle,criação e alteração de saldo e despesa.
- * 
- * @author Sintese Suporte05
- * @version 1.0
- */
-
-public class MoneyManager implements Serializable,IMoneyManager{
-
-	
-	private static final long serialVersionUID = 1L;
-	
-	
 	/**
 	 * saldo se refere ao valor atual de saldo disponivel.
 	 * saldoPrevisto se refere ao valor de saldo ja prevendo o pagamento de todas as despesas adicionadas.
 	 */
 	
-	private Set<Despesa> despesas = new HashSet<>();
-	private Set<Particao> particoes = new HashSet<>();
 	private Double saldo;
 	private Double saldoPrevisto;
+	private String usuarioNome;
+	private DespesaDAO despesaDAO;
+	private DespesaMensalDAO despesaMensalDAO;
+	private	GastoDAO gastoDAO;
+	private ParticaoDAO particaoDAO;
+	Connection con;
 	
-	
-	public MoneyManager(Double saldo) {
+	public MoneyManagerDB(Double saldo, String usuarioNome) throws SQLException {
+		
 		this.saldo = saldo;
 		saldoPrevisto = saldo;
+		this.usuarioNome = usuarioNome;
+		
+		ConnectionPool pool = new ConnectionPool();
+		con = pool.getConnection();
+		try{
+			
+			despesaDAO = new DespesaDAO(con); 
+			despesaMensalDAO = new DespesaMensalDAO(con);
+			gastoDAO = new GastoDAO(con);
+			particaoDAO = new ParticaoDAO(con);
+				
+		}
+		catch(Exception ex) {
+			System.out.println("Falha ao conectar ao banco de dados.\n\n" + ex.getMessage());
+		}
+		
+	}
+
+	
+	public MoneyManagerDB(String usuarioNome, Double saldo, Double saldoPrevisto) throws SQLException {
+		
+		this.saldo = saldo;
+		this.saldoPrevisto = saldoPrevisto;
+		this.usuarioNome = usuarioNome;
+		
+		ConnectionPool pool = new ConnectionPool();
+		con = pool.getConnection();
+		try{
+			
+			despesaDAO = new DespesaDAO(con); 
+			despesaMensalDAO = new DespesaMensalDAO(con);
+			gastoDAO = new GastoDAO(con);
+			particaoDAO = new ParticaoDAO(con);
+				
+		}
+		catch(Exception ex) {
+			System.out.println("Falha ao conectar ao banco de dados.\n\n" + ex.getMessage());
+		}
+		
+	}
+
+	public String getusuarioNome() {
+		return usuarioNome;
+	}
+	
+	public Double getSaldo() {
+		return saldo;
+	}
+	
+	public Double getSaldoPrevisto() {
+		return saldoPrevisto;
 	}
 	
 	
-	/**
-	 * Recebe um valor para adicionar ao saldo.
-	 * 
-	 * @param valor	Double que sera adicionado ao saldo vigente.
-	 * @throws IllegalArgumentException lança uma exceção na pilha quando receber um valor menor ou igual a 0.
-	 */
-	public void adicionarSaldo(Double valor) throws IllegalArgumentException{
+	@Override
+	public void adicionarSaldo(Double valor) throws IllegalArgumentException {
 		if(valor > 0) {
 			saldo += valor;
 			saldoPrevisto += valor;
@@ -57,14 +105,9 @@ public class MoneyManager implements Serializable,IMoneyManager{
 	}
 	
 	
-	/**
-	 * Adiciona uma nova despesa ao HashSet despesas. 
-	 * Possui uma interface via console para auxiliar o usuario do programa a dar a entrada necessaria.
-	 * 
-	 * @throws DespesaExistenteException Joga na pilha uma exceção quando o usuario tenta adicionar uma despesa com o mesmo nome.
-	 */
+	@Override
 	public void adicionarDespesa() throws DespesaExistenteException {
-			
+		
 		Double valor = 0d; 
 		String nome = "";
 		String descricao = "";
@@ -93,25 +136,34 @@ public class MoneyManager implements Serializable,IMoneyManager{
 		System.out.println("Insira o valor da despesa: ");
 		valor = scan.nextDouble();
 		
-		
-		avaliarNovaDespesa(valor);
-		
 		if(tipo == tipodeDespesa.DESPESAMENSAL.getValor()) 
 		{
 			LocalDate data = criarLocalDateDespesaMensal();
-			Despesa despesa = new DespesaMensal(valor,nome,descricao,data);
+			DespesaMensal despesa = new DespesaMensal(valor,nome,descricao,data);
 			
-			despesas.add(despesa);
-			
+			try{
+			avaliarNovaDespesa(valor);
+			despesaMensalDAO.inserir(despesa,usuarioNome);
+			}
+			catch(SQLException ex) {
+				System.out.println(ex.getMessage());
+			}
 		}
 		
 		else if(tipo == tipodeDespesa.GASTOS.getValor()) 
 		{
 			Particao particao = escolherParticaoGastos(valor);
-			Despesa despesa = new Gasto(valor,nome,descricao,particao);
+			Gasto despesa = new Gasto(valor,nome,descricao,particao);
 			
-			despesas.add(despesa);
+			try {
+				avaliarNovaDespesa(valor);
+				gastoDAO.inserir(despesa,usuarioNome);
+			}
+			catch(SQLException ex) {
+				System.out.println(ex.getMessage());
+			}
 		}						
+	
 		
 	}
 	
@@ -122,29 +174,37 @@ public class MoneyManager implements Serializable,IMoneyManager{
 	 * @param valorGasto 	Double referente ao valor da despesa, que sera descontado em sua partição caso tenha uma.
 	 * @return	 	Retorna a Particao escolhida.
 	 */
+	
 	private Particao escolherParticaoGastos(Double valorGasto) {
-		
 		String particao;
 		Scanner scan = new Scanner(System.in);
 		
 		System.out.println("Desseja inserir esse gasto a alguma partição existente?\n");
 		
-		for(Particao x : particoes) 
-			System.out.println(x);
+		mostrarParticoes();
 		
-		System.out.print("\n Caso não queria apenas aperte Enter e prosiga. Se sim insira o nome da particao: ");
+		System.out.print("\nCaso não queria apenas aperte Enter e prosiga. Se sim insira o nome da particao: ");
 		
 		particao = scan.nextLine();
 		
 		if(existeParticao(particao)) 
 		{
 			Particao particaoRetorno = buscarParticao(particao);
-			particaoRetorno.verificarLimite(valorGasto);
-			return particaoRetorno;
+			
+			try {
+				particaoRetorno.verificarLimite(valorGasto);
+				particaoDAO.atualizar(particaoRetorno, usuarioNome);
+				return particaoRetorno;
+			}
+			catch(SQLException ex) {
+				System.out.println("Falha ao conectar ao banco de dados");
+				return null;
+			}
+			
 		}
 		
 		return null;
-		
+	
 	}
 	
 	
@@ -154,8 +214,8 @@ public class MoneyManager implements Serializable,IMoneyManager{
 	 * @return Retorna uma LocalDate referente a uma entrada do usuario.
 	 */
 	
-	private LocalDate criarLocalDateDespesaMensal() {
-		
+	
+	public LocalDate criarLocalDateDespesaMensal() {
 		String data;
 		LocalDate dataretorno;
 		
@@ -172,35 +232,39 @@ public class MoneyManager implements Serializable,IMoneyManager{
 	}
 	
 	
-	/**
-	 * Imprime todas as despesas disponiveis no HashSet despesas.
-	 * 
-	 */
+	@Override
 	public void mostrarDespesas() {
-		despesas.forEach(despesa -> System.out.println(despesa));
+		
+		try
+		{
+			Set<Despesa> despesas = despesaDAO.getDespesa(usuarioNome);
+			despesas.forEach(d -> System.out.println(d));
+		}
+		catch(Exception ex) {
+			System.out.println(ex.getMessage());
+		}
 	}
 	
-	/**
-	 * Imprime todas as despesas pagas ou não pagas, de acordo com a booleana pagas.
-	 * @param pagas	boolean no qual define se sera imprimido as despesas pagas ou não pagas
-	 */
+	
+	@Override
 	public void mostrarDespesas(boolean pagas) {
-		despesas.forEach(despesa -> {
-			if(despesa.foiPago() == pagas)System.out.println(despesa);
-		});
+		try
+		{
+			Set<Despesa> despesas = despesaDAO.searchDespesaByPago(pagas,usuarioNome);
+			despesas.forEach(d -> System.out.println(d));
+		}
+		catch(Exception ex) {
+			System.out.println(ex.getMessage());
+		}
 	}
 	
 	
-	/**
-	 * Recebe como parametro o nome de uma despesa, na qual sera paga. 
-	 * 
-	 * @param nome	String representante do nome da despesa a ser pega.
-	 */
-	
+	@Override
 	public void pagarDespesas(String nome) {
 		saldo = buscarDespesa(nome).pagar(saldo);
+		despesaDAO.pagarDespesa(nome, usuarioNome);
 	}
-	
+
 	
 	/**
 	 * Busca e retorna uma despesa no HashSet despesas
@@ -211,14 +275,17 @@ public class MoneyManager implements Serializable,IMoneyManager{
 	 */
 	private Despesa buscarDespesa(String nome) throws NullPointerException{
 		
-		for(Despesa despesa : despesas)
-		{
-			if(despesa.equals(nome))return despesa;
+		try {
+			Despesa temp = despesaDAO.searchDespesaByName(nome,usuarioNome);
+			if(temp == null) throw new NullPointerException();
+			return temp; 
+		}
+		catch(SQLException ex) {
+			System.out.println(ex.getMessage());
 		}
 		
-		throw new NullPointerException("Despesa não encontrada");
+		throw new NullPointerException();
 	}
-	
 	
 	/**
 	 * Verifica se existe uma Despesa com o mesmo nome no HashSet despesas.
@@ -232,7 +299,7 @@ public class MoneyManager implements Serializable,IMoneyManager{
 		try{
 			buscarDespesa(nome);
 		}
-		catch(RuntimeException ex) {
+		catch(Exception ex) {
 			return false;
 		}
 		
@@ -240,11 +307,7 @@ public class MoneyManager implements Serializable,IMoneyManager{
 	}
 	
 	
-	/**
-	 * Cria uma nova Particao e adiciona ao HashSet particoes.
-	 * @throws ParticaoExistenteException	Joga uma exceção na pilha, quando inserido um nome repetido de partição.
-	 */
-	
+	@Override
 	public void adicionarParticao() throws ParticaoExistenteException {
 		Double limite = 0d; 
 		String ID = "";
@@ -260,7 +323,27 @@ public class MoneyManager implements Serializable,IMoneyManager{
 		limite = scan.nextDouble();
 		
 		Particao novaParticao = new Particao(ID,limite);
-		particoes.add(novaParticao);
+		
+		try {
+		particaoDAO.inserir(novaParticao,usuarioNome);
+		}
+		catch(Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+		
+	}
+	
+	
+	private void mostrarParticoes() {
+		
+		try {
+			Set<Particao> particoes = particaoDAO.getParticao(usuarioNome);
+			particoes.forEach(p -> System.out.println(p));
+		}
+		catch(Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+		
 	}
 	
 	
@@ -271,11 +354,14 @@ public class MoneyManager implements Serializable,IMoneyManager{
 	 * @return			Retorna a Particao buscada
 	 * @throws NullPointerException	Joga uma exceção na pilha quando a particao não for encontrada
 	 */
-	private Particao buscarParticao(String nome) throws NullPointerException{
-		
-		for(Particao particao : particoes)
-		{
-			if(particao.equals(nome))return particao;
+	private Particao buscarParticao(String nome) throws NullPointerException{	
+		try {
+			Particao temp = particaoDAO.searchParticaoByName(nome,usuarioNome);
+			if(temp == null) throw new NullPointerException();
+			return temp; 
+		}
+		catch(SQLException ex) {
+			System.out.println(ex.getMessage());
 		}
 		
 		throw new NullPointerException("Particao não encontrada");
@@ -335,4 +421,5 @@ public class MoneyManager implements Serializable,IMoneyManager{
 		return "Saldo: " + saldo.toString();
 	}
 	
+
 }

@@ -12,6 +12,8 @@ import br.com.diegogabriel.moneymanager.despesas.DespesaMensal;
 
 public class DespesaMensalDAOTest {
 
+	static DespesaMensalDAO dao;
+	
 	public static void main(String[] args) throws SQLException {
 		
 		DateTimeFormatter formato = (DateTimeFormatter.ofPattern("dd/MM/yy")); 
@@ -22,15 +24,18 @@ public class DespesaMensalDAOTest {
 		ConnectionPool pool = new ConnectionPool();
 			
 		try(Connection con = pool.getConnection()){
-			DespesaMensalDAO dao = new DespesaMensalDAO(con);
+			dao = new DespesaMensalDAO(con);
 			
-			dao.inserir(despesaMensal);
-				
-			Set<DespesaMensal> despesasMensais = dao.getDespesaMensal();
-				
-			despesasMensais.forEach(u -> System.out.println(u));
 		}
 
+		executarBusca();
+		
+	}
+	
+	static private void executarBusca() throws SQLException {
+		Set<DespesaMensal> despesasMensais = dao.getDespesaMensal("mugi");
+		
+		despesasMensais.forEach(u -> System.out.println(u));
 	}
 
 }

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
+import br.com.diegogabriel.moneymanager.despesas.DespesaMensal;
 import br.com.diegogabriel.moneymanager.despesas.Gasto;
 import br.com.diegogabriel.moneymanager.modelo.Particao;
 
@@ -20,15 +21,14 @@ import br.com.diegogabriel.moneymanager.modelo.Particao;
  * @version 1.0
  */
 
-public class GastoDAO {
+public class GastoDAO{
 	
-	private final Connection con;
+	protected final Connection con;
 	
 	public GastoDAO(Connection con) {
 		this.con = con;
 	}
-	
-	
+
 	/**
 	 * Insere um Gasto na table Gasto do banco de dados.
 	 * 
@@ -36,9 +36,9 @@ public class GastoDAO {
 	 * @throws SQLException 
 	 */
 	
-	public void inserir(Gasto gasto) throws SQLException {
+	public void inserir(Gasto gasto, String usuario) throws SQLException {
 		
-		String sql = "insert into Gasto(nome, descricao, valor, pago, particaonome) values (?,?,?,?,?)";
+		String sql = "insert into Gasto(nome, descricao, valor, pago, particaonome,usuario) values (?,?,?,?,?,?)";
 		
 		try(PreparedStatement stmt = con.prepareStatement(sql)){
 			stmt.setString(1, gasto.getNome());
@@ -48,6 +48,8 @@ public class GastoDAO {
 			
 			if(gasto.getParticao() != null)stmt.setString(5, gasto.getParticao().getNome());
 			else stmt.setString(5, null);
+			
+			stmt.setString(6, usuario);
 			
 			stmt.execute();
 		}
@@ -61,10 +63,12 @@ public class GastoDAO {
 	 * @return Um Set de gastos presentes na tabela Gasto
 	 * @throws SQLException Lança uma exceção na pilha quando ocorrer algum erro referente ao sql
 	 */
-	public Set<Gasto> getGasto() throws SQLException{
+	public Set<Gasto> getGasto(String usuario) throws SQLException{
 		
 		Set<Gasto> gastos = new HashSet<>();
-		String sql = "select * from Gasto";
+		String sql = "select * from Gasto Left Join PARTICAO\r\n"
+					+ "ON Gasto.particaoNome = PARTICAO.nome"
+					+ " WHERE usuario = " + "'" + usuario + "'";
 		
 		try(PreparedStatement stmt = con.prepareStatement(sql)){
 			stmt.execute();
@@ -74,6 +78,64 @@ public class GastoDAO {
 		
 		return gastos;
 	} 
+	
+	
+	/**
+	 * Recebe um Booleano e retorna um Set de Gasto onde todos seus elementos são pagos ou não, de acordo com o valor da entrada
+	 * 
+	 * @param pago Boolean refrente ao elemento pago de gasto
+	 * @return Retorna um Set de Gasto com o valor de pago equivalente ao valor de pago recebido
+	 * @throws SQLException
+	 */
+	
+	public Set<Gasto> searchGastoByPago(Boolean pago, String usuario) throws SQLException{
+		
+		Set<Gasto> gastos = new HashSet<>();
+		String sql = "select * from Gasto Left Join PARTICAO\r\n"
+					+ "ON Gasto.particaoNome = PARTICAO.nome"
+					+ " where pago = " + pago 
+					+ " AND usuario = " + "'" + usuario + "'";
+				
+		
+		try(PreparedStatement stmt = con.prepareStatement(sql)){
+			stmt.execute();
+			resultSetToGasto(stmt, gastos);
+		}
+		
+		return gastos;
+		
+	}
+	
+	
+	/**
+	 * Recebe uma String e retorna um Set de Gasto com o mesmo nome que essa String
+	 * presentes na tabela Gasto do banco de dados.
+	 * 
+	 * @param nome String refrente ao nome do gasto que queremos buscar
+	 * @return Retorna um Gasto com o mesmo nome recebido
+	 * @throws SQLException
+	 */
+	
+	public Gasto searchGastoByName(String nome, String usuario) throws SQLException{
+		
+		Set<Gasto> gastos = new HashSet<>();
+		String sql = "select * from Gasto Left Join PARTICAO\r\n"
+					+ "ON Gasto.particaoNome = PARTICAO.nome"
+					+ " where Gasto.nome = " + "'" + nome +"'"
+					+ " AND usuario = " + "'" + usuario + "'";
+				
+		
+		try(PreparedStatement stmt = con.prepareStatement(sql)){
+			stmt.execute();
+			resultSetToGasto(stmt, gastos);
+		}
+		
+		for(Gasto g : gastos) return g;
+		
+		return null;
+		
+	}
+	
 	
 	/**
 	 * Pega um Resultado de um PreparedStatement e os adiciona a um Set de Gasto
@@ -90,11 +152,17 @@ public class GastoDAO {
 				String descricao = rs.getString("descricao");
 				Double valor = rs.getDouble("valor");
 				Boolean pago = rs.getBoolean("pago");
-				String nome_particao = rs.getString("particaonome");
+				String nome_particao = rs.getString("particaoNome");
 				
-				ParticaoDAO particaoDAO = new ParticaoDAO(con);
-				Particao p = null;
-				if(nome_particao != null) p = particaoDAO.searchParticaoByName(nome_particao);
+				Particao p;
+				
+				if(nome_particao != null) {
+					Double gastoMes = rs.getDouble("GastoMes");
+					Double limite = rs.getDouble("limite");
+					p = new Particao(nome_particao,limite,gastoMes);
+				}
+				else 
+					p = null;
 				
 				Gasto gasto = new Gasto(valor,nome,descricao, pago,p);
 				gastos.add(gasto);

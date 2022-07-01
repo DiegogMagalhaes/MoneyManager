@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import br.com.diegogabriel.moneymanager.despesas.DespesaMensal;
+import br.com.diegogabriel.moneymanager.modelo.Particao;
 
 
 
@@ -20,14 +21,16 @@ import br.com.diegogabriel.moneymanager.despesas.DespesaMensal;
  * @version 1.0
  */
 
-public class DespesaMensalDAO {
-private final Connection con;
+public class DespesaMensalDAO{
+	
+	protected final Connection con;
 	
 	public DespesaMensalDAO(Connection con) {
 		this.con = con;
 	}
 	
-	
+
+
 	/**
 	 * Insere uma DespesaMensal na table DespesaMensal do banco de dados.
 	 * 
@@ -35,9 +38,9 @@ private final Connection con;
 	 * @throws SQLException 
 	 */
 	
-	public void inserir(DespesaMensal despesaMensal) throws SQLException {
+	public void inserir(DespesaMensal despesaMensal, String usuario) throws SQLException {
 		
-		String sql = "insert into DespesaMensal(nome, descricao, valor, pago ,datavalidade) values (?,?,?,?,?)";
+		String sql = "insert into DespesaMensal(nome, descricao, valor, pago ,datavalidade, usuario) values (?,?,?,?,?,?)";
 		
 		try(PreparedStatement stmt = con.prepareStatement(sql)){
 			stmt.setString(1, despesaMensal.getNome());
@@ -45,6 +48,7 @@ private final Connection con;
 			stmt.setDouble(3, despesaMensal.getValor());
 			stmt.setBoolean(4, despesaMensal.foiPago());
 			stmt.setDate(5, Date.valueOf(despesaMensal.getData()));
+			stmt.setString(6, usuario);
 			stmt.execute();
 		}
 		
@@ -57,10 +61,12 @@ private final Connection con;
 	 * @return Um Set de despesas mensais presentes na tabela DespesaMensal
 	 * @throws SQLException Lança uma exceção na pilha quando ocorrer algum erro referente ao sql
 	 */
-	public Set<DespesaMensal> getDespesaMensal() throws SQLException{
+	public Set<DespesaMensal> getDespesaMensal(String usuario) throws SQLException{
 		
 		Set<DespesaMensal> despesasMensais = new HashSet<>();
-		String sql = "select * from DespesaMensal";
+		String sql = "select * from DespesaMensal\r\n"
+					+ "WHERE usuario = " + "'" + usuario + "'";
+		
 		
 		try(PreparedStatement stmt = con.prepareStatement(sql)){
 			stmt.execute();
@@ -69,6 +75,57 @@ private final Connection con;
 		
 		
 		return despesasMensais;
+	}
+	
+	
+	/**
+	 * Recebe uma String e retorna um Set de DespesaMensal com o mesmo nome que essa String
+	 * presentes na tabela DespesaMensal do banco de dados.
+	 * 
+	 * @param nome String refrente ao nome da despesa mensal que queremos buscar
+	 * @return Retorna uma DespesaMensal com o mesmo nome recebido
+	 * @throws SQLException
+	 */
+	
+	public DespesaMensal searchDespesaMensalByName(String nome, String usuario) throws SQLException{
+		
+		Set<DespesaMensal> despesaMensais = new HashSet<>();
+		String sql = "select * from DespesaMensal where nome = " + "'" + nome +"'"
+					+ " AND usuario = " + "'" + usuario + "'";
+		
+		try(PreparedStatement stmt = con.prepareStatement(sql)){
+			stmt.execute();
+			resultSetToDespesaMensal(stmt, despesaMensais);
+		}
+		
+		for(DespesaMensal m : despesaMensais) return m;
+		
+		return null;
+		
+	}
+	
+	
+	/**
+	 * Recebe um Booleano e retorna um Set de DespesaMensal onde todos seus elementos são pagos ou não, de acordo com o valor da entrada
+	 * 
+	 * @param pago Boolean refrente ao elemento pago de despesa mensal 
+	 * @return Retorna um Set de DespesaMensal com o valor de pago equivalente ao valor de pago recebido
+	 * @throws SQLException
+	 */
+	
+	public Set<DespesaMensal> searchDespesaMensalByPago(Boolean pago, String usuario) throws SQLException{
+		
+		Set<DespesaMensal> despesaMensais = new HashSet<>();
+		String sql = "select * from DespesaMensal where pago = " + pago
+				+ " AND usuario = " + "'" + usuario + "'";
+		
+		try(PreparedStatement stmt = con.prepareStatement(sql)){
+			stmt.execute();
+			resultSetToDespesaMensal(stmt, despesaMensais);
+		}
+		
+		return despesaMensais;
+		
 	}
 	
 	
