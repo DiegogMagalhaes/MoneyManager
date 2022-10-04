@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+      
+	<ui:composition template="_templete.xhtml">
+		
+		<ui:define name="cabecario">
+		</ui:define>
+		
+		<ui:define name="titulo">
+					Pagar Despesa
+		</ui:define>
+		
+		<ui:define name="conteudo">	
+		<p:fieldset>
+			
+			<h:form id= "depesasPagar">
+			
+				<p:dataTable value="#{despesaBean.listaDespesasNaoPagas}" var="despesa" id="tabelaDespesas" border="1" cellpadding="2" cellspacing="2" styleClass="list_table">
+					<f:facet name="header">Despesas</f:facet>
+					
+					<p:column headerText="Nome" sortBy="#{despesa.nome}" filterBy="#{despesa.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{despesa.nome}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Valor</f:facet>
+						<p:outputLabel value="#{despesa.valor}">
+							<f:convertNumber type="currency" maxFractionDigits="2"/>
+						</p:outputLabel>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Descrição</f:facet>
+						<h:outputLabel value="#{despesa.descricao}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Pago</f:facet>
+						<p:outputLabel value="Não pago" rendered="#{despesa.pago == false}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Pagar</f:facet>
+						<p:commandLink value="Pagar" action="#{despesaBean.setListaDespesaPagar}" update="@form">
+							<f:param name="action" value="#{despesa.nome}"/>
+							<f:ajax execute="depesasPagar" render="depesasPagar" />
+						</p:commandLink>
+												
+					</p:column>
+				
+				</p:dataTable>
+				
+				<hr></hr>
+				
+				<p:outputLabel value="Contas selecionadas: "/>
+				
+				<p:dataTable value="#{despesaBean.listaDespesaPagar}" var="despesaPagar" rows="5" border="1" cellpadding="2" cellspacing="2" styleClass="list_table">
+					<f:facet name="header">Despesas</f:facet>
+					
+					<p:column headerText="Nome">
+						<p:outputLabel value="#{despesaPagar.nome}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Valor</f:facet>
+						<p:outputLabel value="#{despesaPagar.valor}">
+							<f:convertNumber type="currency" maxFractionDigits="2"/>
+						</p:outputLabel>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Descrição</f:facet>
+						<p:outputLabel value="#{despesaPagar.descricao}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Pago</f:facet>
+						<p:outputLabel value="Não pago"/>
+					</p:column>
+					
+				</p:dataTable>
+				
+				<p:panelGrid columns="1" layout="grid">
+				
+					<p:outputPanel>
+						<p:outputLabel value="Seu novo saldo sera: "/>
+						<p:outputLabel id="valorPago" value="#{despesaBean.valorPospago}">
+							<f:convertNumber type="currency" maxFractionDigits="2"/>
+						</p:outputLabel>
+					</p:outputPanel>
+					
+					<p:commandButton value="Confirmar" action="#{despesaBean.pagarDespesa}"/>
+				
+				</p:panelGrid>
+				
+				
+			</h:form>
+		
+		</p:fieldset>
+		</ui:define >	
+	
+	</ui:composition>
+
+</html>

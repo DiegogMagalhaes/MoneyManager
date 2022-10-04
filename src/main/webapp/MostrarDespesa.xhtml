@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+  
+  <h:head>
+  	<script type="text/javascript">
+        jsf.ajax.addOnEvent(verMais);
+    </script>
+  </h:head>
+      
+    <h:body>
+    
+      
+	<ui:composition template="_templete.xhtml">
+	
+		<ui:define name="cabecario">
+		</ui:define>
+		
+		<ui:define name="titulo">
+					Despesas
+		</ui:define>
+	
+		<ui:define name="conteudo">	
+		<p:fieldset>
+			
+			<h:form id="formulario">
+			
+				
+				
+				<p:panelGrid columns="1" layout="grid">
+				
+				<p:outputPanel>
+				
+				<p:dataTable value="#{despesaBean.listaDespesas}" var="despesa" id="tabelaDespesas" paginator="true" rows="4">
+					<f:facet name="header">Despesas</f:facet>
+					
+					<p:column headerText="Nome" sortBy="#{despesa.nome}" filterBy="#{despesa.nome}" filterMatchMode="contains" >
+						<p:outputLabel value="#{despesa.nome}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Valor</f:facet>
+						<p:outputLabel value="#{despesa.valor}">
+							<f:convertNumber type="currency" maxFractionDigits="2"/>
+						</p:outputLabel>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Descrição</f:facet>
+						<p:outputLabel value="#{despesa.descricao}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Pago</f:facet>
+						<p:outputLabel value="Pago" rendered="#{despesa.pago == true}"/>
+						<p:outputLabel value="Não pago" rendered="#{despesa.pago == false}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">Ver mais</f:facet>
+						<p:commandLink value = "Ver mais" action="#{despesaBean.verMais}">
+							<f:param name="verMais" value="#{despesa.nome}"/>
+							<f:ajax execute="formulario" render="formulario"/>
+						</p:commandLink>
+					</p:column>
+					
+				</p:dataTable>
+				
+				<p:outputPanel>
+				
+					<p:outputLabel for= "@next" value = "filtro:"/>
+	                <p:selectOneMenu id="option" value="#{despesaBean.filtrarPor}" style="margin-right: 2em">
+	                    <f:selectItem itemLabel="Nenhum" itemValue="Nenhum"/>
+	                    <f:selectItem itemLabel="Gasto" itemValue="Gasto"/>
+	                    <f:selectItem itemLabel="Despesa Mensal" itemValue="Mensal"/>
+	                    <f:ajax listener="#{despesaBean.iniciaParametros}"></f:ajax>
+	                    <f:facet name="footer">
+	                        <p:divider styleClass="mt-0" />
+	                    </f:facet>
+	                </p:selectOneMenu>
+					
+	    			<p:commandButton  target="newPopup" id="exportPDF" value = "Gerar PDF" onclick="window.open('http://localhost:8080/moneymanager/relatorio.pdf');" style="margin-top: 0.5em"/>
+					
+				
+				</p:outputPanel>				
+
+				</p:outputPanel>
+				
+				<p:fieldset>
+			
+					<p:panelGrid columns="1" layout="grid" rendered="#{despesaBean.tipoDespesa == 'gasto'}">
+					
+						<p:outputLabel value="Despesa"  style="font-size: 1.5rem"/>
+						<p:outputLabel value = "Nome: #{despesaBean.gastoSelecionado.nome}" style="font-size: 1.1rem"/>
+						
+						<p:outputPanel>
+							
+						<p:outputLabel value="Valor: "/>
+						<p:outputLabel value = "#{despesaBean.gastoSelecionado.valor}" style="font-size: 1.1rem">
+							<f:convertNumber type="currency" maxFractionDigits="2"/>
+						</p:outputLabel>																	
+						
+						</p:outputPanel>
+						
+						<p:outputLabel value = "Descricao: #{despesaBean.gastoSelecionado.descricao}" style="font-size: 1.1rem"/>
+						<p:outputLabel value = "Pago" rendered="#{despesaBean.gastoSelecionado.pago == true}" style="font-size: 1.1rem"/>
+						<p:outputLabel value = "Não Pago" rendered="#{despesaBean.gastoSelecionado.pago == false}" style="font-size: 1.1rem"/>
+						<p:outputLabel value = "Particao: #{despesaBean.gastoSelecionado.particao}" style="font-size: 1.1rem"/>
+					
+					</p:panelGrid>
+					
+					<p:panelGrid columns="1" rendered="#{despesaBean.tipoDespesa == 'despesaMensal'}">
+					
+						<p:outputLabel value="Despesa" style="font-size: 1.5rem"/>
+						<p:outputLabel value = "Nome: #{despesaBean.despesamensalSelecionado.nome}" style="font-size: 1.1rem"/>
+							
+						<p:outputPanel>
+						
+						<p:outputLabel value="Valor: " style="font-size: 1.1rem"/>
+						<p:outputLabel value = "#{despesaBean.despesamensalSelecionado.valor}" style="font-size: 1.1rem">
+							<f:convertNumber type="currency" maxFractionDigits="2"/>
+						</p:outputLabel>						
+												
+						</p:outputPanel>
+	
+						<p:outputLabel value = "Descricao: #{despesaBean.despesamensalSelecionado.descricao}" style="font-size: 1.1rem"/>
+						<p:outputLabel value = "Pago" rendered="#{despesaBean.despesamensalSelecionado.pago == true}" style="font-size: 1.1rem"/>
+						<p:outputLabel value = "Não Pago" rendered="#{despesaBean.despesamensalSelecionado.pago == false}" style="font-size: 1.1rem"/>
+						<p:outputLabel value = "Data de Validade: #{despesaBean.despesamensalSelecionado.data}" style="font-size: 1.1rem"/>
+					
+					</p:panelGrid>
+					
+				</p:fieldset>					
+				
+				</p:panelGrid>
+				
+					
+
+				
+						
+			</h:form>
+		
+		</p:fieldset>
+		</ui:define>	
+		
+	</ui:composition>
+
+</h:body>  
+    
+
+</html>

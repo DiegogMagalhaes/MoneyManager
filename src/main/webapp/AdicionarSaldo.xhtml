@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:p = "http://primefaces.org/ui">
+      
+     <h:head/> 
+      
+     <h:body>
+	<ui:composition template="_templete.xhtml">
+	
+		<ui:define name="cabecario">
+		</ui:define>
+		
+		<ui:define name="titulo">
+					Adicionar Saldo
+		</ui:define>
+	
+		<ui:define name="conteudo">	
+		<p:fieldset>				
+			
+							
+				
+			
+			<h:form>
+
+
+					<p:outputPanel style="padding: 2em 0">
+						<p:messages/>
+							
+						<p:outputLabel value="adicionar ao saldo:" for="adicionar" style="margin-right:1em"/>
+						<p:inputText id="adicionar" required="true" value="#{usuarioBean.valor}" requiredMessage="Saldo precisa de um valor" revalidatorMessage="O valor deve ser maior que 0 e não pode ser maior que 1bi">
+							<f:passThroughAttribute name="type" value="number"></f:passThroughAttribute>
+							<f:validateDoubleRange minimum="0.01" maximum="99999999.99"/>
+						</p:inputText>
+					
+					</p:outputPanel>
+					
+					<p:commandButton value="adicionar" action="#{usuarioBean.adicionarSaldo}" update="@form" process="@form"/>
+					
+				
+			</h:form>
+		
+		</p:fieldset>
+		</ui:define>	
+	
+	</ui:composition>
+	</h:body> 
+</html>

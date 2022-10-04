@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:ui="http://java.sun.com/jsf/facelets">
+      
+	<ui:composition template="_templete.xhtml">
+		
+		<ui:define name="cabecario">
+		</ui:define>
+		
+		<ui:define name="titulo">
+					Adicionar Partição
+		</ui:define>
+		
+		<ui:define name="conteudo">	
+			<p:fieldset>
+				
+				<h:form>
+				
+				<p:panelGrid columns = "1" layout="grid">
+				
+					<p:messages/>
+				
+					<p:outputPanel>
+					<p:outputLabel value="Nome" for="nomeParticao" style="margin-right:1em"/>
+					<p:inputText id="nomeParticao" value="#{particaoBean.particao.nome}" required="true" requiredMessage="Partição necessita de um nome"/>
+					</p:outputPanel>
+	
+					
+					<p:outputPanel>
+					<p:outputLabel value="Limite" for="limite" style="margin-right:1em"	/>
+					<p:inputText id="limite" value="#{particaoBean.particao.limite}" required="true" requiredMessage="Partição necessita de um valor" validatorMessage="O valor deve ser maior que 0 e não pode ser maior que 1bi">
+						<f:passThroughAttribute name="type" value="number"></f:passThroughAttribute>
+						<f:passThroughAttribute name="step" value="0.01"></f:passThroughAttribute>
+						<f:validateDoubleRange minimum="0.01" maximum="99999999.99"/>
+					</p:inputText>
+					</p:outputPanel>
+					
+					
+					<p:commandButton value="Gravar" action="#{particaoBean.gravar}"/>
+							
+				</p:panelGrid>
+					
+				</h:form>
+			
+			</p:fieldset>
+		</ui:define>	
+	
+	</ui:composition>
+</html>
