@@ -7,13 +7,20 @@ O projeto não se encontra 100% pronto, além de faltar algumas features que pla
 ## Tecnologias usadas:
 
 -``Java``
+
 -``Hibernate``
-JSF
-Servlet
-PrimeFaces
-JasperReport
-PostgreSQL
-CDI
+
+-``JSF``
+
+-``Servlet``
+
+-``PrimeFaces``
+
+-``JasperReport``
+
+-``PostgreSQL``
+
+-``CDI``
 
 ## Servidor usado:
 
