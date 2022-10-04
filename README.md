@@ -6,22 +6,22 @@ O projeto não se encontra 100% pronto, além de faltar algumas features que pla
 
 ## Tecnologias usadas:
 
--``Java``
+- ``Java``
 
--``Hibernate``
+- ``Hibernate``
 
--``JSF``
+- ``JSF``
 
--``Servlet``
+- ``Servlet``
 
--``PrimeFaces``
+- ``PrimeFaces``
 
--``JasperReport``
+- ``JasperReport``
 
--``PostgreSQL``
+- ``PostgreSQL``
 
--``CDI``
+- ``CDI``
 
 ## Servidor usado:
 
-TOMCAT - 9.0
+``TOMCAT - 9.0``
