@@ -4,10 +4,10 @@ Um pequeno projeto para estudo de Java, entre outras tecnologias relacionadas.
 
 O projeto não se encontra 100% pronto, além de faltar algumas features que planejei para o mesmo, não esta totalmente organizado, comentado e otimizado.
 
-Tecnologias usadas:
+## Tecnologias usadas:
 
-Java
-Hibernate
+-``Java``
+-``Hibernate``
 JSF
 Servlet
 PrimeFaces
@@ -15,6 +15,6 @@ JasperReport
 PostgreSQL
 CDI
 
-Servidor usado:
+## Servidor usado:
 
 TOMCAT - 9.0
