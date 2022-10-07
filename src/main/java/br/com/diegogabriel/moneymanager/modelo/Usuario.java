@@ -6,6 +6,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Classe responsavel por definir um Usuario. 
+ * 
+ * @author Diego Gabriel
+ * @version 2.0
+ */
 @Entity
 @Table(name = "USUARIO")
 public class Usuario {
@@ -13,6 +19,7 @@ public class Usuario {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
 	private String nome;
 	private Integer senha;
 	private Double saldo;
@@ -20,143 +27,107 @@ public class Usuario {
 	private Double salario;
 	
 	
-	/**
-	 * @return the saldoPrevisto
-	 */
-	public Double getSaldoPrevisto() {
-		return saldoPrevisto;
-	}
-
-	/**
-	 * @param saldoPrevisto the saldoPrevisto to set
-	 */
-	public void setSaldoPrevisto(Double saldoPrevisto) {
-		this.saldoPrevisto = saldoPrevisto;
-	}
-
-	/**
-	 * Retorna o salario do usuario.
-	 * 
-	 * @return Salario do usuario
-	 */
+	//----------Construtores----------
 	
-	public Double getSalario() {
-		return salario;
+	/**
+	 * Construtor padrão, sem parametros.
+	 */
+	public Usuario() {
+	
 	}
 	
-	/**
-	 * Retorna a senha do usuario.
-	 * 
-	 * @return Senha do usuario
-	 */
-	
-	public Integer getSenha() {
-		return senha;
-	}
-	
+	//----------Getters and Setters----------
 	
 	/**
-	 * @return the id
+	 * @return o id do usuario
 	 */
 	public Long getId() {
 		return id;
 	}
-
+	
 	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	/**
-	 * Retorna o nome do usuario.
-	 * 
-	 * @return	nome do usuario
+	 * @return nome do usuario
 	 */
 	public String getNome() {
 		return nome;
 	}
 	
+	/**
+	 * @return Senha do usuario
+	 */
+	public Integer getSenha() {
+		return senha;
+	}
+	
+	/**
+	 * @return saldo do usuario
+	 */
 	public Double getSaldo() {
 		return saldo;
 	}
 	
 	/**
-	 * Atribui um valor a usuario.
-	 * 
-	 * @param salario do usuario
+	 * @return o saldoPrevisto do usuario
+	 */
+	public Double getSaldoPrevisto() {
+		return saldoPrevisto;
+	}
+	
+	/**
+	 * @return Salario do usuario
+	 */
+	public Double getSalario() {
+		return salario;
+	}
+	
+	
+	
+
+	/**
+	 * @param id Id que indentifica a despesa no banco de dados
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	/**
+	 * @param nome nome referente ao usuario
+	 */
+	public void setNome(String nome) {
+		this.nome= nome ;
+	}
+	
+	/**
+	 * @param senha senha referente ao usuario
+	 */
+	public void setSenha(Integer senha) {
+		this.senha= senha ;
+	}
+	
+	/**
+	 * @param saldo saldo referente ao usuario
+	 */
+	public void setSaldo(Double saldo) {
+		this.saldo = saldo;
+	}
+	
+	/**
+	 * @param saldoPrevisto saldoPrevisto referente ao usuario
+	 */
+	public void setSaldoPrevisto(Double saldoPrevisto) {
+		this.saldoPrevisto = saldoPrevisto;
+	}
+	
+	/**
+	 * @param salario salario referente ao usuario
 	 */
 	
 	public void setSalario(Double salario) {
 		this.salario = salario ;
 	}
 	
-	
-	public void setSaldo(Double saldo) {
-		this.saldo = saldo;
-	}
-	
-	/**
-	 * Atribui um valor a senha.
-	 * 
-	 * @param senha do usuario
-	 */
-	
-	public void setSenha(Integer senha) {
-		this.senha= senha ;
-	}
-	
-	
-	/**
-	 * Atribui um valor a nome
-	 * 
-	 * @param nome do usuario
-	 */
-	public void setNome(String nome) {
-		this.nome= nome ;
-	}
-	
-	
-	/**
-	 * Recebe um valor, no qual sera o novo salario do usuario.
-	 * 
-	 * @param valor	Double referente ao novo salario do usuario.
-	 */
-	
-	public void alterarSalario(Double valor) {
-		this.salario = valor;
-	}
-	
-	
-	public Usuario(String nome, Integer senha, Double salario) {
-		this.nome = nome;
-		this.senha = senha;
-		this.salario = salario;
-		this.saldo = salario;
-		this.saldoPrevisto = salario;
-	}
-	
-	
-	public Usuario() {
-		// TODO Auto-generated constructor stub
-	}
 
-	public Usuario(String nome, Integer senha, Double salario, Double saldo) {
-		this.nome = nome;
-		this.senha = senha;
-		this.salario = salario;
-		this.saldo = saldo;
-		this.saldoPrevisto = saldo;
-	}
-
-	public Usuario(String nome, Integer senha, Double salario, Double saldo, Double saldoPrevisto) {
-		this.nome = nome;
-		this.senha = senha;
-		this.salario = salario;
-		this.saldo = saldo;
-		this.saldoPrevisto = saldoPrevisto;
-	}
+	//----------Metodos----------
 
 	@Override
 	public String toString(){

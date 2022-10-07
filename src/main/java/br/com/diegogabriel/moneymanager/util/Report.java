@@ -27,23 +27,38 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperRunManager;
 
+/**
+ * 
+ * WebServlet responsavel pela geração de um pdf atraves dos arquivos .jasper presentes em WEB-INF/report
+ * 
+ * @author Diego Gabriel
+ * @version 1.0
+ */
+
 @WebServlet("/relatorio.pdf")
 public class Report extends HttpServlet implements Serializable {
 	
 	private static final long serialVersionUID = -448827697779537746L;
 	
+	//----------Construtores----------
+	
+	/**
+	 * Construtor padrão, sem parametros
+	 */
 	public Report() {
 		
 	}
 	
+	//----------Metodos----------
+	
+	/**
+	 * Metodo GET do protocolo HTTP. retorna uma arquivo .pdf
+	 */
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 		Map params = (Map) request.getSession().getAttribute("params");
 		String arquivo = (String) request.getSession().getAttribute("arquivo");
-		
-		System.out.println("------params "+params);
-		System.out.println("------arquivo "+arquivo);
 		
 		byte[] byteArrayPdf = gerarPDF(params, arquivo);
 
@@ -52,6 +67,14 @@ public class Report extends HttpServlet implements Serializable {
         response.getOutputStream().write(byteArrayPdf);
 	}
 	
+	
+	/**
+	 * Gera atraves de um arquivo .jasper uma byte array de um arquivo pdf e a retorna.
+	 * 
+	 * @param parametros 	parametros do formulario
+	 * @param nomeArquivo 	nome do arquivo .jasper que sera o templete para o pdf
+	 * @return byte[]
+	 */
 	private byte[] gerarPDF(Map parametros, String nomeArquivo) {
 		try {
 			   

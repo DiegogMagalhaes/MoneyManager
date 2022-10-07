@@ -9,7 +9,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-
+/**
+ * Classe responsavel pela produção e o fechamento do EntityManagaer
+ * 
+ * @author Diego Gabirel
+ * @version 1.0
+ */
 
 public class JPAUtil implements Serializable {
 

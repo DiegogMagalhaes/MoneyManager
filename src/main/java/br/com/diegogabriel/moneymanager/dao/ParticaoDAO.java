@@ -9,10 +9,8 @@ import br.com.diegogabriel.moneymanager.modelo.Particao;
 import br.com.diegogabriel.moneymanager.modelo.Usuario;
 
 
-
-
 /**
- * Uma classe que interage com o banco de dados, operando na table Particao.
+ * DAO da classe Particao
  * 
  * @author Diego Gabirel
  * @version 1.0
@@ -21,17 +19,21 @@ import br.com.diegogabriel.moneymanager.modelo.Usuario;
 public class ParticaoDAO {
 	
 	/**
-	 * Insere uma Particao na table Particao do banco de dados.
-	 * 
-	 * @param particao Se refere ao Particao no qual sera salva no banco de dados.
+	 * @param  em			EntityMnanager que realizara a comunicação com o banco de dados.
+	 * @param  particao 	Particao no qual sera salva no banco de dados.
 	 * @throws SQLException 
 	 */
-	
 	public void inserir(Particao particao, EntityManager em) throws SQLException {		
 		em.persist(particao);	
 	}
 	
 	
+	/**
+	 * @param  em			EntityMananager que realizara a comunicação com o banco de dados.
+	 * @param  particao		Particao que sera atualizada.
+	 * @param  usuario		Usuario no qual possui a partição que queremos atualizar.
+	 * @throws SQLException
+	 */
 	public void atualizar(EntityManager em, Particao particao, Usuario usuario) throws SQLException {
 		
 		Particao tempparticao =  em.merge(particao);
@@ -41,10 +43,10 @@ public class ParticaoDAO {
 	
 	
 	/**
-	 * Retorna um Set de partiçoes presentes na tabela Particao do banco de dados.
-	 * 
-	 * @return Um Set de partiçoes presentes na tabela Particao
-	 * @throws SQLException Lança uma exceção na pilha quando ocorrer algum erro referente ao sql
+	 * @param  em			EntityMananager que realizara a comunicação com o banco de dados.
+	 * @param  usuario		Usuario no qual possui as partições que queremos procurar.
+	 * @return List<Particao>
+	 * @throws SQLException
 	 */
 	public List<Particao> getParticao(EntityManager em, Usuario usuario) throws SQLException{
 		
@@ -55,14 +57,12 @@ public class ParticaoDAO {
 	
 	
 	/**
-	 * Recebe uma String e retorna um Set de partiçoes com o mesmo nome que essa String
-	 * presentes na tabela Particao do banco de dados.
-	 * 
-	 * @param nome String refrente ao nome da Particao que queremos buscar
-	 * @return
+	 * @param  em		EntityMananager que realizara a comunicação com o banco de dados.
+	 * @param  nome 	String refrente ao nome da Partição que queremos buscar.
+	 * @param  usuario	Usuario no qual possui a partição que queremos procurar.
+	 * @return Particao
 	 * @throws SQLException
 	 */
-	
 	public Particao searchParticaoByName(EntityManager em, String nome, Usuario usuario) throws SQLException{
 			
 		String jpql = "Select p from Particao p WHERE p.usuario.id = :uid AND p.nome = :pnome";

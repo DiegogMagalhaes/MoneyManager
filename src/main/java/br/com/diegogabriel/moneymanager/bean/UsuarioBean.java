@@ -12,43 +12,58 @@ import javax.inject.Named;
 import br.com.diegogabriel.moneymanager.dao.JDBCComunicador;
 import br.com.diegogabriel.moneymanager.modelo.Usuario;
 
+/**
+ * 
+ * Bean onde é feito o processo de comunicação entre o website e a aplicação. 
+ * Referente a manipulação e entre outros metodos referentes ao Usuario.
+ * 
+ * @author Diego Gabriel
+ * @version 1.0
+ */
+
 
 @Named
 @ViewScoped
 public class UsuarioBean implements Serializable{
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	private Usuario usuario;
 	private Double valor;
+	
 	@Inject
 	JDBCComunicador comunicador;
+	
+	//----------Iniciador----------
 	
 	@PostConstruct
 	public void init() {
 		usuario = usuarioAtual();
 	}
 	
-	/**
-	 * @return the valor
-	 */
+	//----------Getters and Setters----------
+	
 	public Double getValor() {
 		return valor;
-	}
-
-	/**
-	 * @param valor the valor to set
-	 */
-	public void setValor(Double valor) {
-		this.valor = valor;
 	}
 
 	public Usuario getUsuario(){
 		return usuario;
 	}
+
 	
+	
+	
+	public void setValor(Double valor) {
+		this.valor = valor;
+	}
+
+	//----------Metodos----------
+	
+	/**
+	 * Adiciona Saldo ao usuario atual
+	 * @return String
+	 */
 	public String adicionarSaldo() {
 		
 		Double resultado = usuario.getSaldo() + this.valor;
@@ -58,6 +73,11 @@ public class UsuarioBean implements Serializable{
 		return "Menu?faces-redirect=true";
 	}
 	
+	
+	/**
+	 * Persiste o novo Usuario no banco de dados
+	 * @return String
+	 */
 	public String Registrar() {
 		
 		if(comunicador.buscarUsuario(usuario.getNome()) != null) {
@@ -75,6 +95,11 @@ public class UsuarioBean implements Serializable{
 		
 	}
 	
+	
+	/**
+	 * Identifica e retorna o usuario atual logado.
+	 * @return Usuario
+	 */
 	public Usuario usuarioAtual() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
@@ -85,6 +110,11 @@ public class UsuarioBean implements Serializable{
 		else return new Usuario();
 	}
 	
+	
+	/**
+	 * Loga um usuario
+	 * @return String
+	 */
 	public String Logar() {
 		
 		Usuario usuarioRequisitado = comunicador.buscarUsuario(usuario.getNome());
@@ -108,6 +138,11 @@ public class UsuarioBean implements Serializable{
 		return "error";
 	}
 	
+	
+	/**
+	 * Desloga o usuario atualmente logado.
+	 * @return String
+	 */
 	public String Logout() {
 		FacesContext c = FacesContext.getCurrentInstance();
 		c.getExternalContext().getSessionMap().put("usuarioLogado", null);

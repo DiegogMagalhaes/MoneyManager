@@ -5,14 +5,20 @@ import java.io.Serializable;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-
+/**
+ * 
+ * Bean onde é feito o processo de comunicação entre o website e a aplicação. 
+ * Referente aos metodos de Navegação, onde permite a transitividade entre paginas.
+ * 
+ * @author Diego Gabriel
+ * @version 1.0
+ */
 
 
 @Named
 @ViewScoped
 public class NavegacaoBean implements Serializable{
 
-	
 	
 	public String formAdicionarDespesa() {
 		return "AdicionarDespesa?faces-redirect=true";

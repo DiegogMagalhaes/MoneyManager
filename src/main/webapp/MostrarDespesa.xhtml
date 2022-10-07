@@ -77,13 +77,13 @@
 	                    <f:selectItem itemLabel="Nenhum" itemValue="Nenhum"/>
 	                    <f:selectItem itemLabel="Gasto" itemValue="Gasto"/>
 	                    <f:selectItem itemLabel="Despesa Mensal" itemValue="Mensal"/>
-	                    <f:ajax listener="#{despesaBean.iniciaParametros}"></f:ajax>
+	                    <f:ajax listener="#{despesaBean.gerarPDF}"></f:ajax>
 	                    <f:facet name="footer">
 	                        <p:divider styleClass="mt-0" />
 	                    </f:facet>
 	                </p:selectOneMenu>
 					
-	    			<p:commandButton  target="newPopup" id="exportPDF" value = "Gerar PDF" onclick="window.open('http://localhost:8080/moneymanager/relatorio.pdf');" style="margin-top: 0.5em"/>
+	    			<p:commandButton  target="newPopup" id="exportPDF" value = "Gerar PDF" onclick="window.open('http://localhost:8080/moneymanager/relatorio.pdf');" style="margin-top	: 0.5em"/>
 					
 				
 				</p:outputPanel>				

@@ -20,7 +20,7 @@ import br.com.diegogabriel.moneymanager.exception.LimiteParticaoException;
  * Nesse mês sempre que você criar um novo gasto que tenha como partição essa coleção de cartas, você sera impedido de adicionar esse gasto no sistema caso ultrapasse o limite.
  * 
  * @author Diego Gabriel
- * @version 1.0
+ * @version 2.0
  */
 @Entity
 @Table(name = "PARTICAO")
@@ -29,12 +29,29 @@ public class Particao implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String nome;
-	private Double gastoMes;
-	private Double limite;
+	
 	@ManyToOne
 	private Usuario usuario;
 	
+	private String nome;
+	private Double gastoMes;
+	private Double limite;
+
+	
+	//----------Construtores----------
+	
+	/**
+	 * Construtor padrão, sem parametros.
+	 */
+	public Particao() {
+		
+	}
+	
+	
+	/**
+	 * @param nome		String referente ao nome da partição
+	 * @param limite	Double referente ao limite da partição
+	 */
 	public Particao(String nome, Double limite) {
 		this.nome = nome;
 		this.limite = limite;
@@ -42,11 +59,14 @@ public class Particao implements Serializable{
 	}
 	
 	
-	public Particao(String nome, Double limite, Double gastoMes) {
-		this.nome = nome;
-		this.limite = limite;
-		this.gastoMes = gastoMes;
-	}	
+	/**
+	 * Construtor de Particao, usado para carregar uma particao ja existente de um banco de dados
+	 * 
+	 * @param nome		String referente ao nome da partição
+	 * @param limite	Double referente ao limite da partição
+	 * @param gastoMes	Double referente à quantidade de gastos no mes de uma partição
+	 * @param usuario   Usuario responsavel pelo relacionamento entre usuario e particao
+	 */
 	public Particao(String nome, Double limite, Double gastoMes, Usuario usuario) {
 		this.nome = nome;
 		this.limite = limite;
@@ -54,94 +74,83 @@ public class Particao implements Serializable{
 		this.usuario = usuario;
 	}
 	
+	
+	//----------Getters and Setters----------
+	
 	/**
-	 * @return the id
+	 * @return valor de id
 	 */
 	public Long getId() {
 		return id;
 	}
 
 	/**
-	 * @param id the id to set
+	 * @return nome da partição
+	 */
+	public String getNome() {
+		return nome;
+	}
+	
+	/**
+	 * @return gastoMes da partição
+	 */
+	public Double getGastoMes() {
+		return gastoMes;
+	}
+	
+	/**
+	 * @return usuario relacionado a partição
+	 */
+	public Usuario getUsuario() {
+		return usuario;
+	}
+	
+	/**
+	 * @return limite da partição
+	 */	
+	public Double getLimite() {
+		return limite;
+	}
+	
+	
+	
+	/**
+	 * @param id Id que indentifica a despesa no banco de dados
 	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 	
-	public Particao() {
-		
-	}
-	
 	/**
-	 * Retorna o nome da partição.
-	 * 
-	 * @return	nome da partição
+	 * @param nome Nome que sera atribuido a particao
 	 */
-	
-	public String getNome() {
-		return nome;
-	}
-
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
 	
 	/**
-	 * Retorna o Gasto Mensal) da partição.
-	 * 
-	 * @return	gastoMes da partição
+	 * @param gastoMes Quantidade de gastos ao mês relacionado a uma partição
 	 */
-	
-	public Double getGastoMes() {
-		return gastoMes;
-	}
-	
 	public void setGastoMes(Double gastoMes) {
 		this.gastoMes = gastoMes;
 	}
 
-	
 	/**
-	 * @return the usuario
-	 */
-	public Usuario getUsuario() {
-		return usuario;
-	}
-
-
-	/**
-	 * @param usuario the usuario to set
+	 * @param usuario Usuario que relaciona com essa partição 
 	 */
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
-
-
+	
 	/**
-	 * Retorna o limite da partição.
-	 * 
-	 * @return	limite da partição
+	 * @param limite Limite da partição
 	 */
-	
-	public Double getLimite() {
-		return limite;
-	}
-	
 	public void setLimite(Double limite) {
 		this.limite = limite;
 	}
 
 
-	/**
-	 * Recebe um valor para ser adicionado aos gastos mensais feitos nessa partição.
-	 * 
-	 * @param gastos Double representante de um valor gasto, no qual sera adicionado a gastoMes.
-	 */
-	
-	private void addGastosMes(Double gastos) {
-		gastoMes = gastos;
-	}
-	
+	//----------Metodos----------
 	
 	/**
 	 * Recebe um valor, no qual é verificado se sua soma com os gastos anteriores desse mes extrapola o limite estabelecido. 
@@ -149,11 +158,10 @@ public class Particao implements Serializable{
 	 * 
 	 * @param valor	Double referente ao valor da conta que esta sendo adicionada a particao.
 	 */
-	
 	public void verificarLimite(Double valor) {
 		Double resultado = valor + gastoMes;
 		if(resultado > limite) throw new LimiteParticaoException(String.valueOf(limite - gastoMes));
-		addGastosMes(resultado);
+		setGastoMes(resultado);
 	}
 	
 	
@@ -169,9 +177,11 @@ public class Particao implements Serializable{
 		return this.nome.equals(outraParticao.getNome());
 	}
 	
+	
 	public boolean equals(String s) {
 		return this.nome.equals(s);
 	}
+	
 	
 	@Override
 	public int hashCode() {

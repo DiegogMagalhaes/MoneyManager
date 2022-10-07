@@ -8,6 +8,14 @@ import javax.faces.event.PhaseListener;
 
 import br.com.diegogabriel.moneymanager.modelo.Usuario;
 
+/**
+ * 
+ * Realiza operações e filtragem entre fases de uma requisição.
+ * 
+ * @author Diego Gabriel
+ * @version 1.0
+ */
+
 public class Autorizador implements PhaseListener{
 
 	@Override

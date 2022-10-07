@@ -24,15 +24,24 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import br.com.diegogabriel.moneymanager.dao.JDBCComunicador;
-import br.com.diegogabriel.moneymanager.despesas.Despesa;
-import br.com.diegogabriel.moneymanager.despesas.DespesaMensal;
-import br.com.diegogabriel.moneymanager.despesas.Gasto;
 import br.com.diegogabriel.moneymanager.exception.LimiteParticaoException;
+import br.com.diegogabriel.moneymanager.modelo.Despesa;
+import br.com.diegogabriel.moneymanager.modelo.DespesaMensal;
+import br.com.diegogabriel.moneymanager.modelo.Gasto;
 import br.com.diegogabriel.moneymanager.modelo.Particao;
 import br.com.diegogabriel.moneymanager.modelo.Usuario;
 import br.com.diegogabriel.moneymanager.util.Report;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+/**
+ * 
+ * Bean onde é feito o processo de comunicação entre o website e a aplicação. 
+ * Referente a manipulação e entre outros metodos referentes a Despesa
+ * 
+ * @author Diego Gabriel
+ * @version 1.0
+ */
 
 
 @Named
@@ -40,34 +49,51 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 public class DespesaBean implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
+	
 	private Usuario usuario;
+	private Despesa despesa;
+	
 	@Inject
 	JDBCComunicador comunicador;
-	/*@Inject
-	Report report;*/
 	
-	private Despesa despesa = new Despesa(0.0,"","");
 	private Gasto gastoSelecionado;
 	private DespesaMensal despesamensalSelecionado;
 	private String tipoDespesa;
-	private String filtrarPor = "";
+	private String filtrarPor;
 	
-	private List<Despesa> listaDespesa = new ArrayList<Despesa>();
-	private List<Despesa> listaDespesaPagar = new ArrayList<Despesa>();
+	private List<Despesa> listaDespesa;
+	private List<Despesa> listaDespesaPagar;
  	
-	private String radioValue = "";
+	private String radioValue;
 
 	private String data;
-	private String nomeParticao = "";
+	private String nomeParticao;
 	
-	private Boolean temParticao = false;
+	private Boolean temParticao;
 	private List<Particao> particoes;
+	
+	//----------Iniciador----------
 	
 	@PostConstruct
 	public void init() {
+		
 		usuario = indentificarUsuario();
-		iniciaParametros();
+		despesa = new Despesa(0.0,"","");
+		
+		filtrarPor = "";
+		radioValue = "";
+		nomeParticao = "";
+		temParticao = false;
+		
+		
+		listaDespesa = new ArrayList<Despesa>();
+		listaDespesaPagar = new ArrayList<Despesa>();
+		
+		
+		gerarPDF();
 	}
+	
+	//----------Getters and Setters----------
 	
 	public Gasto getGastoSelecionado() {
 		return gastoSelecionado;
@@ -81,18 +107,6 @@ public class DespesaBean implements Serializable{
 		return tipoDespesa;
 	}
 
-	public void setGastoSelecionado(Gasto gastoSelecionado) {
-		this.gastoSelecionado = gastoSelecionado;
-	}
-
-	public void setDespesamensalSelecionado(DespesaMensal despesamensalSelecionado) {
-		this.despesamensalSelecionado = despesamensalSelecionado;
-	}
-
-	public void setTipoDespesa(String tipoDespesa) {
-		this.tipoDespesa = tipoDespesa;
-	}
-	
 	public List<Despesa> getListaDespesaPagar() {
 		return listaDespesaPagar;
 	}
@@ -100,61 +114,21 @@ public class DespesaBean implements Serializable{
 	public Double getSaldoPrevisto() {
 		return (comunicador.buscarUsuario(usuario.getNome()).getSaldoPrevisto() - despesa.getValor());
 	}
-
-	public void setListaDespesaPagar() {
-		
-		FacesContext context = FacesContext.getCurrentInstance();
-		Map<String, String> params = context.getExternalContext().getRequestParameterMap();
-
-		String despesaNome = (String)params.get("action");
-		Despesa despesa = buscarDespesa(despesaNome);
-		
-		this.listaDespesaPagar.add(despesa);
-	}	
-
-	private Usuario indentificarUsuario(){
-		FacesContext context = FacesContext.getCurrentInstance();
-		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
-
-		return usuarioLogado;	
-	}
-	
-	private void AtualizarUsuario() {
-		usuario = comunicador.buscarUsuario(usuario.getNome());
-	}
-	
-	//Getters and Setters
 	
 	public Despesa getDespesa() {
 		return despesa;
-	}
-	
-	public void setData(String data) {
-		this.data = data;
 	}
 	
 	public String getData() {
 		return data;
 	}
 	
-	public void setTemParticao(Boolean temParticao) {
-		this.temParticao = temParticao;
-	}
-	
 	public Boolean getTemParticao() {
 		return temParticao;
 	}
 	
-	public void setNomeParticao(String nomeParticao) {
-		this.nomeParticao = nomeParticao;
-	}
-	
 	public String getNomeParticao() {
 		return nomeParticao;
-	}
-	
-	public void setRadioValue(String radioValue){
-		this.radioValue = radioValue;
 	}
 	
 	public String getRadioValue() {
@@ -197,7 +171,6 @@ public class DespesaBean implements Serializable{
 		return particoes;
 	}
 	
-
 	public List<Despesa> getListaDespesas(){
 		
 		
@@ -232,24 +205,59 @@ public class DespesaBean implements Serializable{
 		
 	}
 	
-	
-	
-	//Conversores e Validadores
-	
-	/**
-	 * @return the filtrarPor
-	 */
 	public String getFiltrarPor() {
 		return filtrarPor;
 	}
 
-	/**
-	 * @param filtrarPor the filtrarPor to set
-	 */
+	
+	
+	
+	public void setGastoSelecionado(Gasto gastoSelecionado) {
+		this.gastoSelecionado = gastoSelecionado;
+	}
+
+	public void setDespesamensalSelecionado(DespesaMensal despesamensalSelecionado) {
+		this.despesamensalSelecionado = despesamensalSelecionado;
+	}
+
+	public void setTipoDespesa(String tipoDespesa) {
+		this.tipoDespesa = tipoDespesa;
+	}
+	
+	public void setListaDespesaPagar() {
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		Map<String, String> params = context.getExternalContext().getRequestParameterMap();
+
+		String despesaNome = (String)params.get("action");
+		Despesa despesa = buscarDespesa(despesaNome);
+		
+		this.listaDespesaPagar.add(despesa);
+	}	
+	
+	public void setData(String data) {
+		this.data = data;
+	}
+	
+	public void setTemParticao(Boolean temParticao) {
+		this.temParticao = temParticao;
+	}
+	
+	public void setNomeParticao(String nomeParticao) {
+		this.nomeParticao = nomeParticao;
+	}
+	
+	public void setRadioValue(String radioValue){
+		this.radioValue = radioValue;
+	}
+	
 	public void setFiltrarPor(String filtrarPor) {
 		this.filtrarPor = filtrarPor;
 	}
-
+	
+	
+	//----------Conversores e Validadores----------
+	
 	public LocalDate converterData() {
 		System.out.println("Passou aqui: " + data);
 		DateTimeFormatter formato = (DateTimeFormatter.ofPattern("dd/MM/yy")); 
@@ -257,6 +265,7 @@ public class DespesaBean implements Serializable{
 		
 		return d;
 	}
+	
 	
 	public void validatorData(FacesContext fc, UIComponent component, Object value) throws ValidatorException{
 		String s = value.toString();
@@ -270,7 +279,20 @@ public class DespesaBean implements Serializable{
 		}
 	}
 	
-	//Metodos
+	//----------Metodos----------
+	
+	private Usuario indentificarUsuario(){
+		FacesContext context = FacesContext.getCurrentInstance();
+		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
+
+		return usuarioLogado;	
+	}
+	
+	
+	private void AtualizarUsuario() {
+		usuario = comunicador.buscarUsuario(usuario.getNome());
+	}
+	
 	
 	public void verMais() {
 		
@@ -339,17 +361,21 @@ public class DespesaBean implements Serializable{
 		}
 	}
 	
+	
 	public Particao buscarParticao() {
-		Particao p = comunicador.buscarParticao(nomeParticao,usuario);
-		return p;
+		return comunicador.buscarParticao(nomeParticao,usuario);
 	}
 
+	
 	private Despesa buscarDespesa(String nome) {
-		Despesa d = comunicador.buscarDespesa(nome,usuario);
-		return d;
+		return comunicador.buscarDespesa(nome,usuario);
 	}
 
-	public void iniciaParametros(){
+	
+	/**
+	 * Inicia os parametros necessarios para o jasperReport produzir o PDF e logo em seguida ja gera o PDF em memoria.
+	 */
+	public void gerarPDF(){
 		
 		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         ServletContext context = (ServletContext) externalContext.getContext();
@@ -367,8 +393,7 @@ public class DespesaBean implements Serializable{
 			arquivo = context.getRealPath("WEB-INF/report/Despesa.jasper");
 			break;
 		}
-        
-        
+         
         
         Map params = new HashMap<String,Object>();
         
@@ -384,6 +409,11 @@ public class DespesaBean implements Serializable{
 		
 	}
 	
+	
+	/**
+	 * Persiste a Despesa criada no banco de dados
+	 * @return String
+	 */
 	public String gravar(){
 		
 		if(usuario.getSaldoPrevisto() - despesa.getValor() < 0){
