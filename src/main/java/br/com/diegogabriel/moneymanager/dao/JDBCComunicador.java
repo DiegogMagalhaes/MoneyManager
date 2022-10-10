@@ -30,7 +30,7 @@ public class JDBCComunicador implements Serializable {
 	@Inject
 	private EntityManager em;
 	
-	//----------Despsa----------
+	//----------Despesa----------
 	
 	/**
 	 * 
@@ -152,7 +152,7 @@ public class JDBCComunicador implements Serializable {
 
 	
 	/**
-	 * @param  Nomeparticao 	String refrente ao nome da Partição que queremos buscar
+	 * @param  Nomeparticao		String refrente ao nome da Partição que queremos buscar
 	 * @param  usuario			Usuario no qual possui a partição que queremos procurar.
 	 * @return Particao
 	 */
